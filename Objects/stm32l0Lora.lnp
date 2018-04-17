@@ -1,0 +1,23 @@
+--cpu Cortex-M0+
+".\objects\main.o"
+".\objects\interrupt.o"
+".\objects\startup_stm32l072xx.o"
+".\objects\system_stm32l0xx.o"
+".\objects\clock.o"
+".\objects\delay.o"
+".\objects\gpio.o"
+".\objects\spi.o"
+".\objects\usart.o"
+".\objects\lowpower.o"
+".\objects\rtc.o"
+".\objects\rng.o"
+".\objects\interrupt_1.o"
+".\objects\lora.o"
+".\objects\aes.o"
+".\objects\cmac.o"
+".\objects\loramaccrypto.o"
+".\objects\universal.o"
+--library_type=microlib --strict --scatter ".\Objects\stm32l0Lora.sct"
+--summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols
+--info sizes --info totals --info unused --info veneers
+--list ".\Listings\stm32l0Lora.map" -o .\Objects\stm32l0Lora.axf

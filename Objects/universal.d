@@ -1,0 +1,10 @@
+.\objects\universal.o: universal\universal.c
+.\objects\universal.o: .\CMSIS\stm32l0xx.h
+.\objects\universal.o: C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\stm32l072xx.h
+.\objects\universal.o: .\CMSIS\core_cm0plus.h
+.\objects\universal.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\universal.o: .\CMSIS\core_cmInstr.h
+.\objects\universal.o: .\CMSIS\cmsis_armcc.h
+.\objects\universal.o: .\CMSIS\core_cmFunc.h
+.\objects\universal.o: C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.h
+.\objects\universal.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h

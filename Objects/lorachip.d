@@ -1,0 +1,11 @@
+.\objects\lorachip.o: lora\loraChip.c
+.\objects\lorachip.o: lora\loraChip_config.h
+.\objects\lorachip.o: .\hardware\gpio.h
+.\objects\lorachip.o: C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\stm32l072xx.h
+.\objects\lorachip.o: .\system\core_cm0plus.h
+.\objects\lorachip.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdint.h
+.\objects\lorachip.o: .\system\core_cmInstr.h
+.\objects\lorachip.o: .\system\cmsis_armcc.h
+.\objects\lorachip.o: .\system\core_cmFunc.h
+.\objects\lorachip.o: C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.h
+.\objects\lorachip.o: .\hardware\utility.h
