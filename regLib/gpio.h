@@ -243,5 +243,6 @@ void GPIO_Pin_Clear (GPIO_TypeDef * GPIOx, uint32_t Pin);
 void GPIO_Pin_Toggle (GPIO_TypeDef * GPIOx, uint32_t Pin);
 void GPIO_Pin_OutputMode (GPIO_TypeDef * GPIOx, uint32_t Pin, uint32_t Output);
 void GPIO_Alternate_Function (GPIO_TypeDef * GPIOx, uint32_t Pin, uint32_t AF);
+void GPIO_analogIn_lowPower();
 
 #endif

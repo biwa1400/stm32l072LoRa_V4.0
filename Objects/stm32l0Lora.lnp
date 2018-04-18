@@ -1,6 +1,7 @@
 --cpu Cortex-M0+
 ".\objects\main.o"
 ".\objects\interrupt.o"
+".\objects\loraapp.o"
 ".\objects\startup_stm32l072xx.o"
 ".\objects\system_stm32l0xx.o"
 ".\objects\clock.o"
@@ -16,6 +17,7 @@
 ".\objects\aes.o"
 ".\objects\cmac.o"
 ".\objects\loramaccrypto.o"
+".\objects\lorachip.o"
 ".\objects\universal.o"
 --library_type=microlib --strict --scatter ".\Objects\stm32l0Lora.sct"
 --summary_stderr --info summarysizes --map --load_addr_map_info --xref --callgraph --symbols

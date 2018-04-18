@@ -20,3 +20,5 @@
 .\objects\main.o: .\regLib\rng.h
 .\objects\main.o: .\regLib\interrupt.h
 .\objects\main.o: .\loraLib\lora.h
+.\objects\main.o: .\loraLib\loraChip.h
+.\objects\main.o: user\loraApp.h

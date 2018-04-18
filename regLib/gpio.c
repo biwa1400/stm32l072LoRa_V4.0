@@ -50,6 +50,15 @@ void GPIO_Alternate_Function (GPIO_TypeDef * GPIOx, uint32_t Pin, uint32_t AF)
   Bitfield_Modify (GPIOA->AFR[Pin >> 3], 0xF << ((Pin & 0x7) * 4), AF << ((Pin & 0x7) * 4));
 }
 
+void GPIO_analogIn_lowPower()
+{
+		GPIOA->MODER = 0x00;
+		GPIOB->MODER = 0x00;
+		GPIOC->MODER = 0x00;
+		GPIOD->MODER = 0x00;
+		GPIOE->MODER = 0x00;
+		GPIOH->MODER = 0x00;
+}
 
 
 

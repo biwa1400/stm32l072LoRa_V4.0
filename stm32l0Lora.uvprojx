@@ -390,6 +390,11 @@
               <FileType>1</FileType>
               <FilePath>.\user\interrupt.c</FilePath>
             </File>
+            <File>
+              <FileName>loraApp.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\user\loraApp.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -479,6 +484,11 @@
               <FileName>LoRaMacCrypto.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\ecrypt\LoRaMacCrypto.c</FilePath>
+            </File>
+            <File>
+              <FileName>loraChip.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\loraLib\loraChip.c</FilePath>
             </File>
           </Files>
         </Group>

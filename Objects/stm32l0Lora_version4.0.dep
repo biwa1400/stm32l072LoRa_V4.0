@@ -1,5 +1,5 @@
 Dependencies for Project 'stm32l0Lora', Target 'version4.0': (DO NOT MODIFY !)
-F (.\user\main.c)(0x5AD07008)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (.\user\main.c)(0x5AD75294)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x588BE5B4)
 I (.\regLib\regLib.h)(0x5ACF7812)
 I (.\CMSIS\stm32l0xx.h)(0x5AC4D5F8)
@@ -13,15 +13,17 @@ I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.
 I (.\regLib\clock.h)(0x5ACB27B8)
 I (.\regLib\delay.h)(0x5ACB29C4)
 I (.\regLib\usart.h)(0x5ACB2BEB)
-I (.\regLib\lowpower.h)(0x5ACB908B)
-I (.\regLib\rtc.h)(0x5ACC5EF3)
-I (.\regLib\gpio.h)(0x5ACC6EC7)
+I (.\regLib\lowpower.h)(0x5AD5D7F6)
+I (.\regLib\rtc.h)(0x5AD5D744)
+I (.\regLib\gpio.h)(0x5AD5EF8C)
 I (.\regLib\spi.h)(0x5ACC7301)
 I (.\regLib\rng.h)(0x5ACC9F19)
 I (.\regLib\interrupt.h)(0x5ACF79D0)
-I (.\loraLib\lora.h)(0x5AD09456)
-F (.\user\interrupt.c)(0x5AD06DA9)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\interrupt.o --omf_browse .\objects\interrupt.crf --depend .\objects\interrupt.d)
-I (.\loraLib\lora.h)(0x5AD09456)
+I (.\loraLib\lora.h)(0x5AD753B6)
+I (.\loraLib\loraChip.h)(0x5AD5B83B)
+I (user\loraApp.h)(0x5AD5B623)
+F (.\user\interrupt.c)(0x5AD5FE19)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\interrupt.o --omf_browse .\objects\interrupt.crf --depend .\objects\interrupt.d)
+I (.\loraLib\lora.h)(0x5AD753B6)
 I (.\CMSIS\stm32l0xx.h)(0x5AC4D5F8)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\stm32l072xx.h)(0x573D70D6)
 I (.\CMSIS\core_cm0plus.h)(0x59B686AB)
@@ -34,12 +36,13 @@ I (.\regLib\regLib.h)(0x5ACF7812)
 I (.\regLib\clock.h)(0x5ACB27B8)
 I (.\regLib\delay.h)(0x5ACB29C4)
 I (.\regLib\usart.h)(0x5ACB2BEB)
-I (.\regLib\lowpower.h)(0x5ACB908B)
-I (.\regLib\rtc.h)(0x5ACC5EF3)
-I (.\regLib\gpio.h)(0x5ACC6EC7)
+I (.\regLib\lowpower.h)(0x5AD5D7F6)
+I (.\regLib\rtc.h)(0x5AD5D744)
+I (.\regLib\gpio.h)(0x5AD5EF8C)
 I (.\regLib\spi.h)(0x5ACC7301)
 I (.\regLib\rng.h)(0x5ACC9F19)
 I (.\regLib\interrupt.h)(0x5ACF79D0)
+F (.\user\loraApp.c)(0x5AD5B58E)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\loraapp.o --omf_browse .\objects\loraapp.crf --depend .\objects\loraapp.d)
 F (.\CMSIS\startup_stm32l072xx.s)(0x59B686B5)(--cpu Cortex-M0+ -g --apcs=interwork --pd "__MICROLIB SETA 1"-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include--pd "__UVISION_VERSION SETA 524" --pd "STM32L072xx SETA 1"--list .\listings\startup_stm32l072xx.lst --xref -o .\objects\startup_stm32l072xx.o --depend .\objects\startup_stm32l072xx.d)
 F (.\CMSIS\system_stm32l0xx.c)(0x59B686B8)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\system_stm32l0xx.o --omf_browse .\objects\system_stm32l0xx.crf --depend .\objects\system_stm32l0xx.d)
 I (CMSIS\stm32l0xx.h)(0x5AC4D5F8)
@@ -63,9 +66,9 @@ I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.
 I (regLib\clock.h)(0x5ACB27B8)
 I (regLib\delay.h)(0x5ACB29C4)
 I (regLib\usart.h)(0x5ACB2BEB)
-I (regLib\lowpower.h)(0x5ACB908B)
-I (regLib\rtc.h)(0x5ACC5EF3)
-I (regLib\gpio.h)(0x5ACC6EC7)
+I (regLib\lowpower.h)(0x5AD5D7F6)
+I (regLib\rtc.h)(0x5AD5D744)
+I (regLib\gpio.h)(0x5AD5EF8C)
 I (regLib\spi.h)(0x5ACC7301)
 I (regLib\rng.h)(0x5ACC9F19)
 I (regLib\interrupt.h)(0x5ACF79D0)
@@ -82,13 +85,13 @@ I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.
 I (regLib\clock.h)(0x5ACB27B8)
 I (regLib\delay.h)(0x5ACB29C4)
 I (regLib\usart.h)(0x5ACB2BEB)
-I (regLib\lowpower.h)(0x5ACB908B)
-I (regLib\rtc.h)(0x5ACC5EF3)
-I (regLib\gpio.h)(0x5ACC6EC7)
+I (regLib\lowpower.h)(0x5AD5D7F6)
+I (regLib\rtc.h)(0x5AD5D744)
+I (regLib\gpio.h)(0x5AD5EF8C)
 I (regLib\spi.h)(0x5ACC7301)
 I (regLib\rng.h)(0x5ACC9F19)
 I (regLib\interrupt.h)(0x5ACF79D0)
-F (.\regLib\gpio.c)(0x5ACC6165)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\gpio.o --omf_browse .\objects\gpio.crf --depend .\objects\gpio.d)
+F (.\regLib\gpio.c)(0x5AD5EF67)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\gpio.o --omf_browse .\objects\gpio.crf --depend .\objects\gpio.d)
 I (regLib\regLib.h)(0x5ACF7812)
 I (.\CMSIS\stm32l0xx.h)(0x5AC4D5F8)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\stm32l072xx.h)(0x573D70D6)
@@ -101,9 +104,9 @@ I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.
 I (regLib\clock.h)(0x5ACB27B8)
 I (regLib\delay.h)(0x5ACB29C4)
 I (regLib\usart.h)(0x5ACB2BEB)
-I (regLib\lowpower.h)(0x5ACB908B)
-I (regLib\rtc.h)(0x5ACC5EF3)
-I (regLib\gpio.h)(0x5ACC6EC7)
+I (regLib\lowpower.h)(0x5AD5D7F6)
+I (regLib\rtc.h)(0x5AD5D744)
+I (regLib\gpio.h)(0x5AD5EF8C)
 I (regLib\spi.h)(0x5ACC7301)
 I (regLib\rng.h)(0x5ACC9F19)
 I (regLib\interrupt.h)(0x5ACF79D0)
@@ -120,9 +123,9 @@ I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.
 I (regLib\clock.h)(0x5ACB27B8)
 I (regLib\delay.h)(0x5ACB29C4)
 I (regLib\usart.h)(0x5ACB2BEB)
-I (regLib\lowpower.h)(0x5ACB908B)
-I (regLib\rtc.h)(0x5ACC5EF3)
-I (regLib\gpio.h)(0x5ACC6EC7)
+I (regLib\lowpower.h)(0x5AD5D7F6)
+I (regLib\rtc.h)(0x5AD5D744)
+I (regLib\gpio.h)(0x5AD5EF8C)
 I (regLib\spi.h)(0x5ACC7301)
 I (regLib\rng.h)(0x5ACC9F19)
 I (regLib\interrupt.h)(0x5ACF79D0)
@@ -142,14 +145,14 @@ I (regLib\regLib.h)(0x5ACF7812)
 I (regLib\clock.h)(0x5ACB27B8)
 I (regLib\delay.h)(0x5ACB29C4)
 I (regLib\usart.h)(0x5ACB2BEB)
-I (regLib\lowpower.h)(0x5ACB908B)
-I (regLib\rtc.h)(0x5ACC5EF3)
-I (regLib\gpio.h)(0x5ACC6EC7)
+I (regLib\lowpower.h)(0x5AD5D7F6)
+I (regLib\rtc.h)(0x5AD5D744)
+I (regLib\gpio.h)(0x5AD5EF8C)
 I (regLib\spi.h)(0x5ACC7301)
 I (regLib\rng.h)(0x5ACC9F19)
 I (regLib\interrupt.h)(0x5ACF79D0)
 I (C:\Keil_v5\ARM\ARMCC\include\stdbool.h)(0x588BE5B4)
-F (.\regLib\lowpower.c)(0x5ACC601B)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\lowpower.o --omf_browse .\objects\lowpower.crf --depend .\objects\lowpower.d)
+F (.\regLib\lowpower.c)(0x5AD5F885)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\lowpower.o --omf_browse .\objects\lowpower.crf --depend .\objects\lowpower.d)
 I (regLib\regLib.h)(0x5ACF7812)
 I (.\CMSIS\stm32l0xx.h)(0x5AC4D5F8)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\stm32l072xx.h)(0x573D70D6)
@@ -162,13 +165,14 @@ I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.
 I (regLib\clock.h)(0x5ACB27B8)
 I (regLib\delay.h)(0x5ACB29C4)
 I (regLib\usart.h)(0x5ACB2BEB)
-I (regLib\lowpower.h)(0x5ACB908B)
-I (regLib\rtc.h)(0x5ACC5EF3)
-I (regLib\gpio.h)(0x5ACC6EC7)
+I (regLib\lowpower.h)(0x5AD5D7F6)
+I (regLib\rtc.h)(0x5AD5D744)
+I (regLib\gpio.h)(0x5AD5EF8C)
 I (regLib\spi.h)(0x5ACC7301)
 I (regLib\rng.h)(0x5ACC9F19)
 I (regLib\interrupt.h)(0x5ACF79D0)
-F (.\regLib\rtc.c)(0x5ACC9DB0)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\rtc.o --omf_browse .\objects\rtc.crf --depend .\objects\rtc.d)
+F (.\regLib\rtc.c)(0x5AD5DB2E)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\rtc.o --omf_browse .\objects\rtc.crf --depend .\objects\rtc.d)
+I (regLib\regLib.h)(0x5ACF7812)
 I (.\CMSIS\stm32l0xx.h)(0x5AC4D5F8)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\stm32l072xx.h)(0x573D70D6)
 I (.\CMSIS\core_cm0plus.h)(0x59B686AB)
@@ -177,6 +181,15 @@ I (.\CMSIS\core_cmInstr.h)(0x59B686AB)
 I (.\CMSIS\cmsis_armcc.h)(0x59B686AB)
 I (.\CMSIS\core_cmFunc.h)(0x59B686AB)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.h)(0x573D70D6)
+I (regLib\clock.h)(0x5ACB27B8)
+I (regLib\delay.h)(0x5ACB29C4)
+I (regLib\usart.h)(0x5ACB2BEB)
+I (regLib\lowpower.h)(0x5AD5D7F6)
+I (regLib\rtc.h)(0x5AD5D744)
+I (regLib\gpio.h)(0x5AD5EF8C)
+I (regLib\spi.h)(0x5ACC7301)
+I (regLib\rng.h)(0x5ACC9F19)
+I (regLib\interrupt.h)(0x5ACF79D0)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x588BE5B4)
 F (.\regLib\rng.c)(0x5ACC9F12)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\rng.o --omf_browse .\objects\rng.crf --depend .\objects\rng.d)
 I (regLib\regLib.h)(0x5ACF7812)
@@ -191,9 +204,9 @@ I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.
 I (regLib\clock.h)(0x5ACB27B8)
 I (regLib\delay.h)(0x5ACB29C4)
 I (regLib\usart.h)(0x5ACB2BEB)
-I (regLib\lowpower.h)(0x5ACB908B)
-I (regLib\rtc.h)(0x5ACC5EF3)
-I (regLib\gpio.h)(0x5ACC6EC7)
+I (regLib\lowpower.h)(0x5AD5D7F6)
+I (regLib\rtc.h)(0x5AD5D744)
+I (regLib\gpio.h)(0x5AD5EF8C)
 I (regLib\spi.h)(0x5ACC7301)
 I (regLib\rng.h)(0x5ACC9F19)
 I (regLib\interrupt.h)(0x5ACF79D0)
@@ -210,15 +223,15 @@ I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.
 I (regLib\clock.h)(0x5ACB27B8)
 I (regLib\delay.h)(0x5ACB29C4)
 I (regLib\usart.h)(0x5ACB2BEB)
-I (regLib\lowpower.h)(0x5ACB908B)
-I (regLib\rtc.h)(0x5ACC5EF3)
-I (regLib\gpio.h)(0x5ACC6EC7)
+I (regLib\lowpower.h)(0x5AD5D7F6)
+I (regLib\rtc.h)(0x5AD5D744)
+I (regLib\gpio.h)(0x5AD5EF8C)
 I (regLib\spi.h)(0x5ACC7301)
 I (regLib\rng.h)(0x5ACC9F19)
 I (regLib\interrupt.h)(0x5ACF79D0)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x588BE5B4)
-F (.\loraLib\lora.c)(0x5AD0DBF4)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\lora.o --omf_browse .\objects\lora.crf --depend .\objects\lora.d)
-I (loraLib\lora.h)(0x5AD09456)
+F (.\loraLib\lora.c)(0x5AD7560E)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\lora.o --omf_browse .\objects\lora.crf --depend .\objects\lora.d)
+I (loraLib\lora.h)(0x5AD753B6)
 I (.\CMSIS\stm32l0xx.h)(0x5AC4D5F8)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\stm32l072xx.h)(0x573D70D6)
 I (.\CMSIS\core_cm0plus.h)(0x59B686AB)
@@ -227,24 +240,24 @@ I (.\CMSIS\core_cmInstr.h)(0x59B686AB)
 I (.\CMSIS\cmsis_armcc.h)(0x59B686AB)
 I (.\CMSIS\core_cmFunc.h)(0x59B686AB)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.h)(0x573D70D6)
-I (loraLib\sx1276.h)(0x5A0CEC90)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x588BE5B4)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x588BE5B4)
+I (loraLib\loraProtocol.h)(0x5AD740F6)
+I (loraLib\sx1276.h)(0x5A0CEC90)
+I (.\ecrypt\LoRaMacCrypto.h)(0x5A0CEC90)
+I (loraLib\loraParameters.h)(0x5AD7555E)
+I (loraLib\loraChip.h)(0x5AD5B83B)
+I (.\universal\universal.h)(0x5ACDC53A)
 I (.\regLib\regLib.h)(0x5ACF7812)
 I (.\regLib\clock.h)(0x5ACB27B8)
 I (.\regLib\delay.h)(0x5ACB29C4)
 I (.\regLib\usart.h)(0x5ACB2BEB)
-I (.\regLib\lowpower.h)(0x5ACB908B)
-I (.\regLib\rtc.h)(0x5ACC5EF3)
-I (.\regLib\gpio.h)(0x5ACC6EC7)
+I (.\regLib\lowpower.h)(0x5AD5D7F6)
+I (.\regLib\rtc.h)(0x5AD5D744)
+I (.\regLib\gpio.h)(0x5AD5EF8C)
 I (.\regLib\spi.h)(0x5ACC7301)
 I (.\regLib\rng.h)(0x5ACC9F19)
 I (.\regLib\interrupt.h)(0x5ACF79D0)
-I (loraLib\loraChip.h)(0x5ACC7896)
-I (loraLib\loraProtocol.h)(0x5AD096FC)
-I (.\ecrypt\LoRaMacCrypto.h)(0x5A0CEC90)
-I (loraLib\loraParameters.h)(0x5ACDC457)
-I (.\universal\universal.h)(0x5ACDC53A)
 F (.\ecrypt\aes.c)(0x5A0CEC90)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\aes.o --omf_browse .\objects\aes.crf --depend .\objects\aes.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdlib.h)(0x588BE5B4)
 I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BE5B4)
@@ -259,6 +272,28 @@ I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BE5B4)
 I (ecrypt\aes.h)(0x5A0CEC90)
 I (ecrypt\cmac.h)(0x5A0CEC90)
 I (ecrypt\LoRaMacCrypto.h)(0x5A0CEC90)
+F (.\loraLib\loraChip.c)(0x5AD749C1)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\lorachip.o --omf_browse .\objects\lorachip.crf --depend .\objects\lorachip.d)
+I (.\regLib\regLib.h)(0x5ACF7812)
+I (.\CMSIS\stm32l0xx.h)(0x5AC4D5F8)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\stm32l072xx.h)(0x573D70D6)
+I (.\CMSIS\core_cm0plus.h)(0x59B686AB)
+I (C:\Keil_v5\ARM\ARMCC\include\stdint.h)(0x588BE5B4)
+I (.\CMSIS\core_cmInstr.h)(0x59B686AB)
+I (.\CMSIS\cmsis_armcc.h)(0x59B686AB)
+I (.\CMSIS\core_cmFunc.h)(0x59B686AB)
+I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.h)(0x573D70D6)
+I (.\regLib\clock.h)(0x5ACB27B8)
+I (.\regLib\delay.h)(0x5ACB29C4)
+I (.\regLib\usart.h)(0x5ACB2BEB)
+I (.\regLib\lowpower.h)(0x5AD5D7F6)
+I (.\regLib\rtc.h)(0x5AD5D744)
+I (.\regLib\gpio.h)(0x5AD5EF8C)
+I (.\regLib\spi.h)(0x5ACC7301)
+I (.\regLib\rng.h)(0x5ACC9F19)
+I (.\regLib\interrupt.h)(0x5ACF79D0)
+I (loraLib\sx1276.h)(0x5A0CEC90)
+I (loraLib\loraChipPinDefine.h)(0x5AD5A876)
+I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x588BE5B4)
 F (.\universal\universal.c)(0x5A782C5F)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\universal.o --omf_browse .\objects\universal.crf --depend .\objects\universal.d)
 I (.\CMSIS\stm32l0xx.h)(0x5AC4D5F8)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\stm32l072xx.h)(0x573D70D6)

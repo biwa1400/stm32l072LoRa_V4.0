@@ -1,19 +1,18 @@
 #include "regLib.h"
 
-void wakeup_RTC_setting(uint32_t second);
 void stopmode_enter();
 void sleepmode_enter();
 void standBymode_enter();
 
 // Init RTC before calling this function
-void lowpower_stopMode(uint32_t second)
+void lowpower_stopMode(float second)
 {
 	// set wakeup clock source is MSI
 	RCC->CFGR &= ~RCC_CFGR_STOPWUCK;
+	// setting sleep time
+	rtc_wakeup_interrupt_setting(second);
 	// before sleep, disable HSI and PLL
 	switch_2MHz();
-	// setting sleep time
-	wakeup_RTC_setting(second);
 	stopmode_enter();
 }
 
@@ -28,22 +27,22 @@ void lowpower_stopMode_noTimer()
 
 
 // Init RTC before calling this function
-void lowpower_sleepMode(uint32_t second)
+void lowpower_sleepMode(float second)
 {
 	// setting sleep time
-	wakeup_RTC_setting(second);
+	rtc_wakeup_interrupt_setting(second);
 	sleepmode_enter();
 }
 
 // Init RTC before calling this function
-void lowpower_standByMode(uint32_t second)
+void lowpower_standByMode(float second)
 {
 	// set wakeup clock source is MSI
 	RCC->CFGR &= ~RCC_CFGR_STOPWUCK;
 	// before sleep, disable HSI and PLL
 	switch_2MHz();
 	// setting sleep time
-	wakeup_RTC_setting(second);
+	rtc_wakeup_interrupt_setting(second);
 	standBymode_enter();
 }
 

@@ -1,157 +1,17 @@
 #include "lora.h"
-#include "sx1276.h"
 #include <stdio.h>
 #include <string.h>
-#include "regLib.h"
-#include "loraChip.h"
+
 #include "loraProtocol.h"
 #include "LoRaMacCrypto.h"
 #include "loraParameters.h"
+#include "loraChip.h"
+#include "sx1276.h"
 #include "universal.h"
+#include "regLib.h"
 
-static void LoRa_Init_GPIO()
-{
-		// 1.Enable PA,PB,PC
-	RCC->IOPENR |= RCC_IOPENR_GPIOAEN; 
-	RCC->IOPENR |= RCC_IOPENR_GPIOBEN;
-	RCC->IOPENR |= RCC_IOPENR_GPIOCEN;
-	
-	// RADIO_TCXO_VCC_PORT
-	GPIO_Pin_Mode (RADIO_TCXO_VCC_PORT, RADIO_TCXO_VCC_PIN, RADIO_TCXO_VCC_MODE);
-  GPIO_Pin_Pull (RADIO_TCXO_VCC_PORT, RADIO_TCXO_VCC_PIN, RADIO_TCXO_VCC_PULL);
-  GPIO_Pin_Speed (RADIO_TCXO_VCC_PORT, RADIO_TCXO_VCC_PIN, RADIO_TCXO_VCC_SPEED);
-  GPIO_Pin_Clear (RADIO_TCXO_VCC_PORT, RADIO_TCXO_VCC_PIN);
-	
-	// Antena switch RX
-	GPIO_Pin_Mode (RADIO_ANT_SWITCH_RX_PORT, RADIO_ANT_SWITCH_RX_PIN, RADIO_ANT_SWITCH_RX_MODE);
-  GPIO_Pin_Pull (RADIO_ANT_SWITCH_RX_PORT, RADIO_ANT_SWITCH_RX_PIN, RADIO_ANT_SWITCH_RX_PULL);
-  GPIO_Pin_Speed (RADIO_ANT_SWITCH_RX_PORT, RADIO_ANT_SWITCH_RX_PIN, RADIO_ANT_SWITCH_RX_SPEED);
-  GPIO_Pin_Clear (RADIO_ANT_SWITCH_RX_PORT, RADIO_ANT_SWITCH_RX_PIN);
+static LORA_SESSION* callbackSessionPtr;
 
-	// Antena switch TX_BOOST
-  GPIO_Pin_Mode (RADIO_ANT_SWITCH_TX_BOOST_PORT, RADIO_ANT_SWITCH_TX_BOOST_PIN, RADIO_ANT_SWITCH_TX_BOOST_MODE);
-  GPIO_Pin_Pull (RADIO_ANT_SWITCH_TX_BOOST_PORT, RADIO_ANT_SWITCH_TX_BOOST_PIN, RADIO_ANT_SWITCH_TX_BOOST_PULL);
-  GPIO_Pin_Speed (RADIO_ANT_SWITCH_TX_BOOST_PORT, RADIO_ANT_SWITCH_TX_BOOST_PIN, RADIO_ANT_SWITCH_TX_BOOST_SPEED);
-  GPIO_Pin_Clear (RADIO_ANT_SWITCH_TX_BOOST_PORT, RADIO_ANT_SWITCH_TX_BOOST_PIN);
-
-	// Antena switch TX_RFO
-  GPIO_Pin_Mode (RADIO_ANT_SWITCH_TX_RFO_PORT, RADIO_ANT_SWITCH_TX_RFO_PIN, RADIO_ANT_SWITCH_TX_RFO_MODE);
-  GPIO_Pin_Pull (RADIO_ANT_SWITCH_TX_RFO_PORT, RADIO_ANT_SWITCH_TX_RFO_PIN, RADIO_ANT_SWITCH_TX_RFO_PULL);
-  GPIO_Pin_Speed (RADIO_ANT_SWITCH_TX_RFO_PORT, RADIO_ANT_SWITCH_TX_RFO_PIN, RADIO_ANT_SWITCH_TX_RFO_SPEED);
-  GPIO_Pin_Clear (RADIO_ANT_SWITCH_TX_RFO_PORT, RADIO_ANT_SWITCH_TX_RFO_PIN);
-	
-	
-	// reset pin
-	GPIO_Pin_Mode (RADIO_RESET_PORT, RADIO_RESET_PIN, RADIO_RESET_MODE);
-  GPIO_Pin_Pull (RADIO_RESET_PORT, RADIO_RESET_PIN, RADIO_RESET_PULL);
-  GPIO_Pin_Speed (RADIO_RESET_PORT, RADIO_RESET_PIN, RADIO_RESET_SPEED);
-  GPIO_Pin_Set (RADIO_RESET_PORT, RADIO_RESET_PIN);
-	
-	// Disable PA,PB,PC
-	RCC->IOPENR &= ~RCC_IOPENR_GPIOAEN; 
-	RCC->IOPENR &= ~RCC_IOPENR_GPIOBEN;
-	RCC->IOPENR &= ~RCC_IOPENR_GPIOCEN;
-	
-	
-	// Config IO interrupt
-	// DIO 0
-	IO_Interrupt_Def io_int_str;
-	io_int_str.GPIO_GROUP=RADIO_DIO0_PORT;
-	io_int_str.pin = RADIO_DIO0_PIN;
-	io_int_str.isRisingtTrig = TRUE;
-	io_int_str.interruptPriority = 0;
-	IO_Interrupt_enable(&io_int_str);
-	
-	// DIO 1
-	io_int_str.GPIO_GROUP=RADIO_DIO1_PORT;
-	io_int_str.pin = RADIO_DIO1_PIN;
-	io_int_str.isRisingtTrig = TRUE;
-	io_int_str.interruptPriority = 0;
-	IO_Interrupt_enable(&io_int_str);
-	
-}
-
-static void LoRa_Init_SPI()
-{
-	SPI_INIT_DEF spi_init_str;
-	// MOSI PA7
-	spi_init_str.GPIO_GROUP_MOSI = RADIO_MOSI_PORT;
-	spi_init_str.GPIO_PIN_MOSI = RADIO_MOSI_PIN;
-	spi_init_str.GPIO_AF_MOSI = RADIO_MOSI_AF;
-	// MISO PA6
-	spi_init_str.GPIO_GROUP_MISO = RADIO_MISO_PORT;
-	spi_init_str.GPIO_PIN_MISO = RADIO_MISO_PIN;
-	spi_init_str.GPIO_AF_MISO = RADIO_MISO_AF;
-	// NSS PA15
-	spi_init_str.GPIO_GROUP_NSS = RADIO_NSS_PORT;
-	spi_init_str.GPIO_PIN_NSS = RADIO_NSS_PIN;
-	spi_init_str.GPIO_AF_NSS = RADIO_NSS_AF;
-	// SCLK PB3
-	spi_init_str.GPIO_GROUP_SCLK = RADIO_SCLK_PORT;
-	spi_init_str.GPIO_PIN_SCLK = RADIO_SCLK_PIN;
-	spi_init_str.GPIO_AF_SCLK = RADIO_SCLK_AF;
-	
-	SPI_Init (RADIO_SPI, &spi_init_str);
-}
-
-static inline void RegisterWrite(uint8_t address,uint8_t value)
-{
-	SPI_RegisterWrite (RADIO_SPI,address,value);
-}
-
-static inline uint8_t RegisterRead(uint8_t address)
-{
-	return SPI_RegisterRead (RADIO_SPI, address);
-}
-
-static inline void BlockWrite(uint8_t address, uint8_t* value, uint8_t size)
-{
-	SPI_BlockWrite (RADIO_SPI, address, value, size);
-}
-
-static inline void BlockRead(uint8_t address, uint8_t* value, uint8_t size)
-{
-	SPI_BlockRead (RADIO_SPI,address,value,size);
-}
-
-static inline void RegisterModify(uint8_t address, uint32_t mask, uint32_t changeValue)
-{
-	uint8_t value = RegisterRead(address);
-	value &= mask;
-	value |= changeValue;
-	RegisterWrite(address,value);
-}
-
-static void LoRa_HW_init()
-{
-	//1. init lora_gpio
-	LoRa_Init_GPIO();
-	//2. init lora_spi
-	LoRa_Init_SPI();
-	
-	//1. set TCXO_VCC
-	RCC->IOPENR |= RCC_IOPENR_GPIOAEN; 
-	GPIO_Pin_Set (RADIO_TCXO_VCC_PORT, RADIO_TCXO_VCC_PIN);
-	
-	
-	RCC->IOPENR &= ~RCC_IOPENR_GPIOAEN;
-	// waiting chip turn on 
-	while((RegisterRead(SX1276_RegOPMODE)&RFLR_OPMODE_STANDBY)!=RFLR_OPMODE_STANDBY);
-	//3. enter sleep mode to change LoRa Mode
-	RegisterWrite(0x01,0x00);
-	// setting it to LoRa mode & stand by mode
-	RegisterWrite(0x01,0x80);
-	RegisterWrite(0x01,0x81);	
-	
-	// invert IQ
-	RegisterWrite (SX1276_RegINVERTIQ, 0x67);
-	// synchronous code
-	RegisterWrite(SX1276_RegSYNCWORD,0x34);
-	// enable CRC
-	RegisterWrite(SX1276_RegMODEMCONFIG2,0x74);
-	// symbol length exceeds 16ms
-	RegisterWrite(SX1276_RegMODEMCONFIG3,0x08);
-}
 
 //static volatile LORA_SESSION loraSession;
 void LoRa_init_Parameter(LORA_SESSION* loraSession)
@@ -164,101 +24,26 @@ void LoRa_init_Parameter(LORA_SESSION* loraSession)
 	
 	uint8_t LoraKeyValue[] = {LORA_KEY_VALUE};
 	memcpy((void*)(loraSession->key),LoraKeyValue,16);
+	
+	// setting 3 default channels frequency
+	loraSession->Channel_1_Freq = DEFAULT_CHANNEL1_FREQ;
+	loraSession->Channel_2_Freq = DEFAULT_CHANNEL2_FREQ;
+	loraSession->Channel_3_Freq = DEFAULT_CHANNEL3_FREQ;
+	
+	loraSession->isJoinNetwork = FALSE;
+	loraSession->isReceive = FALSE;
 }
 
-void LoRa_init(LORA_SESSION* loraSession)
+void LoRa_init(LORA_SESSION* input_LORA_SESSION_ptr)
 {
 	LoRa_HW_init();
-	LoRa_init_Parameter(loraSession);
-}
-
-
-void LoRa_sleep()
-{
-	RegisterModify(SX1276_RegOPMODE,RFLR_OPMODE_MASK,RFLR_OPMODE_SLEEP);
-}
-
-void LoRa_standby()
-{
-	RegisterModify(SX1276_RegOPMODE,RFLR_OPMODE_MASK,RFLR_OPMODE_STANDBY);
-}
-
-void LoRa_resetChip()
-{
-	RCC->IOPENR |= RCC_IOPENR_GPIOCEN; 
-  GPIO_Pin_Clear (RADIO_RESET_PORT, RADIO_RESET_PIN);
-  delay (5);
-  GPIO_Pin_Set (RADIO_RESET_PORT, RADIO_RESET_PIN);
-  //Save power. Reset pin is pulled up in SX1276.
-  GPIO_Pin_Mode (RADIO_RESET_PORT, RADIO_RESET_PIN, GPIO_MODE_INPUT);
-  delay(5);
-	RCC->IOPENR &= ~RCC_IOPENR_GPIOCEN;
-}
-
-
-void LoRa_Set_TxPower (uint8_t value)
-{
-	RegisterWrite(SX1276_RegPACONFIG,value|0x80);
-}
-
-void LoRa_Set_SF (uint8_t value)
-{
-	uint8_t oldValue = RegisterRead(SX1276_RegMODEMCONFIG2);
-	oldValue &= ~(0xf0);
-	oldValue |= value<<4;
-	RegisterWrite(SX1276_RegMODEMCONFIG2,oldValue);
-	printf("set value to %d %.2x\n",value,oldValue);
+	LoRa_init_Parameter(input_LORA_SESSION_ptr);
 	
-	//change low datarate optimize
-	uint8_t registerValue = RegisterRead(SX1276_RegMODEMCONFIG3);
-	if(value <= 10 && (registerValue&0x08)!=0)
-	{
-		RegisterWrite(SX1276_RegMODEMCONFIG3,registerValue&(~0x08));
-	}
-	else if(value > 10 && (registerValue&0x08)==0)
-	{
-		RegisterWrite(SX1276_RegMODEMCONFIG3,registerValue|0x08);
-	}
+	// default Tx Power
+	LoRa_Set_TxPower (DEFAULT_TX_POWER);
+	// default SF
+	LoRa_Set_SF (DEFAULT_SEND_SF);
 }
-
-void LoRa_Set_Frequency (uint32_t Frequency)
-{	
-  uint64_t frf = ((uint64_t)Frequency << 19) / 32000000;
-  RegisterWrite (SX1276_RegFRFMSB, (uint8_t)(frf >> 16));
-  RegisterWrite (SX1276_RegFRFMID, (uint8_t)(frf >> 8));
-  RegisterWrite (SX1276_RegFRFLSB, (uint8_t)(frf >> 0));
-}
-
-void RF_Send(uint8_t* data, uint8_t size)
-{	
-	/*
-	RCC->IOPENR |= RCC_IOPENR_GPIOCEN; 
-	GPIO_Pin_Set (RADIO_ANT_SWITCH_TX_BOOST_PORT, RADIO_ANT_SWITCH_TX_BOOST_PIN);
-	RCC->IOPENR &= ~RCC_IOPENR_GPIOCEN;
-*/
-	// write value to register
-  //RegisterWrite (SX1276_RegFIFOTXBASEADDR, 0x00);
-  RegisterWrite (SX1276_RegFIFOADDRPTR, 0x80);
-	BlockWrite(SX1276_RegFIFO,data,size);
-  RegisterWrite (SX1276_RegPAYLOADLENGTH, size);
-
-	// change IO Interrupt status
-	RegisterModify(SX1276_RegDIOMAPPING1,RFLR_DIOMAPPING1_DIO0_MASK,RFLR_DIOMAPPING1_DIO0_01);
-	// change mode to transmit
-	RegisterModify(SX1276_RegOPMODE,RFLR_OPMODE_MASK,RFLR_OPMODE_TRANSMITTER);
-}
-
-
-void RF_Receive()
-{
-	// change chip state to receive Continuous
-  //RegisterWrite (SX1276_RegFIFOADDRPTR, 0x00);
-		// change IO Interrupt status
-	RegisterModify(SX1276_RegDIOMAPPING1,RFLR_DIOMAPPING1_DIO0_MASK,RFLR_DIOMAPPING1_DIO0_00);
-		// change mode to receive
-	RegisterModify (SX1276_RegOPMODE, RFLR_OPMODE_MASK,RFLR_OPMODE_RXCONTINUOUS);
-}
-
 
 
 static void generateDevNonce(uint8_t* value)
@@ -267,8 +52,80 @@ static void generateDevNonce(uint8_t* value)
 	memcpy(value,&genetrateRadonValue,2);
 }
 
-void LoRa_JoinNetwork(LORA_SESSION* lora_session)
+void static sendTrigger (LORA_SESSION* lora_session, uint8_t* sendBuf, uint8_t sendSize)
 {
+	callbackSessionPtr = lora_session;
+	
+	// set transmit frequency
+	uint16_t randomValue;
+	// ge random value
+	generateDevNonce((uint8_t*)&randomValue);
+	if(lora_session->isSendJustPubFreq == FALSE)
+	{
+		randomValue = randomValue%8;
+	}
+	else
+	{
+		randomValue = randomValue%3;
+	}
+	// set Channel
+	switch(randomValue)
+	{
+		case 0:
+			LoRa_Set_Frequency(lora_session->Channel_1_Freq);
+			break;
+		case 1:
+			LoRa_Set_Frequency(lora_session->Channel_2_Freq);
+			break;
+		case 2:
+			LoRa_Set_Frequency(lora_session->Channel_3_Freq);
+			break;
+		case 3:
+			LoRa_Set_Frequency(lora_session->Channel_4_Freq);
+			break;
+		case 4:
+			LoRa_Set_Frequency(lora_session->Channel_5_Freq);
+			break;
+		case 5:
+			LoRa_Set_Frequency(lora_session->Channel_6_Freq);
+			break;
+		case 6:
+			LoRa_Set_Frequency(lora_session->Channel_7_Freq);
+			break;
+		case 7:
+			LoRa_Set_Frequency(lora_session->Channel_8_Freq);
+			break;
+	}
+
+	
+	
+	if (lora_session->isReceive == FALSE)
+	{
+			RF_Send(sendBuf, sendSize);
+			return;
+	}
+	else
+	{
+		if (lora_session ->isSleepWaiting ==FALSE)
+		{
+			RF_Send(sendBuf, sendSize);
+		}
+		else
+		{
+			RF_Send(sendBuf, sendSize);
+			while(lora_session ->isTxDone == FALSE);
+			lowpower_stopMode(lora_session ->receiveWaitTime);
+		}
+	}
+}
+
+void LoRa_JoinNetwork(LORA_SESSION* lora_session, uint8_t isReJoin, uint8_t isSleepWaiting)
+{
+	if (lora_session->isJoinNetwork != FALSE && isReJoin == FALSE)
+	{
+		return;
+	}
+	
 	// generate DevNonce
 	generateDevNonce(lora_session->DevNonce);
 	
@@ -294,8 +151,81 @@ void LoRa_JoinNetwork(LORA_SESSION* lora_session)
 	{
 		printf("%.2x:",pointer[i]);
 	}
+	
+	// setting_session isSleepWaiting
+	lora_session->isJoinNetwork = FALSE;
+	lora_session->isSleepWaiting = isSleepWaiting;
+	lora_session->isTxDone = FALSE;
+	lora_session->isReceive = TRUE;
+	lora_session->receiveWaitTime = JOINNETWORK_WAITING_TIME_S;
+	lora_session->isSendJustPubFreq = TRUE;
+	
 	// send it
-	RF_Send(pointer, sizeof(joinRequest));
+	sendTrigger(lora_session,pointer,sizeof(joinRequest));
+}
+
+
+void LoRa_package_send(LORA_SESSION* lora_session,uint8_t FPort,uint8_t* FOpts, uint8_t FOpts_size, uint8_t* payload,uint8_t payload_size, uint8_t isConfirm)
+{
+	if(lora_session->isJoinNetwork == FALSE)
+	{
+		return;
+	}
+	// MHDR
+	LORA_DATAUP uplink_package;
+	if(isConfirm != FALSE)
+	{
+		uplink_package.MHDR = MTTYPE_ConfirmedDataUp;
+	}
+	else
+	{
+		uplink_package.MHDR = MTTYPE_UnconfirmedDataUp;
+	}
+	
+	// DevAddr
+	memcpy(uplink_package.DevAddr,lora_session->DevAddr,4);
+	// FCtrl
+	uint8_t  FCtrl =0;
+		// setFOptsLen
+	FCtrl |= (FOpts_size&0x0f);
+		// setADR 
+	FCtrl |= ((lora_session->ADR&0x01)<<7);
+		// setADRACKReq
+	FCtrl |= ((lora_session->ADRACKReq&0x01)<<6);
+		// setACK
+	FCtrl |= ((lora_session->ACK&0x01)<<6);
+	uplink_package.FCtrl = FCtrl;
+	// FCnt
+	memcpy(uplink_package.FCnt,(uint8_t*)&lora_session->FCnt,2);
+	
+	uint32_t pointerOffset=0;
+	// FOpts
+		// set FOpts
+	memcpy(uplink_package.FOpts_FPort_FRMPayload_MIC+pointerOffset,FOpts,FOpts_size);
+	pointerOffset += FOpts_size;
+	// FPort
+	memcpy(uplink_package.FOpts_FPort_FRMPayload_MIC+pointerOffset,&FPort,1);
+	pointerOffset += 1;
+	// FRMPayload
+		// encode FRMPayload
+	uint32_t DevAddr = *(uint32_t*)(lora_session->DevAddr);
+	LoRaMacPayloadEncrypt( payload,payload_size,lora_session->AppSKey,DevAddr, 0, lora_session->FCnt, payload );
+		// set FRMPayload
+	memcpy(uplink_package.FOpts_FPort_FRMPayload_MIC+pointerOffset,payload,payload_size);
+	pointerOffset += payload_size;
+	// MAC
+		//Calculate MAC
+	uint8_t micBuf[4];
+	LoRaMacComputeMic( &uplink_package.MHDR, 8+pointerOffset,lora_session->NwkSKey, DevAddr, 0, lora_session->FCnt, (uint32_t*)micBuf );
+		//set MAC
+	memcpy(uplink_package.FOpts_FPort_FRMPayload_MIC+pointerOffset,micBuf,4);
+	pointerOffset += 4;
+	
+	lora_session->isSendJustPubFreq = FALSE;
+	lora_session->isReceive = isConfirm;
+	lora_session->receiveWaitTime = DOWNPACKET_WAITING_TIME_S;
+	
+	sendTrigger (lora_session, (uint8_t*)&uplink_package, 8+pointerOffset);
 }
 
 void testMic(LORA_SESSION* lora_session)
@@ -309,58 +239,171 @@ void testMic(LORA_SESSION* lora_session)
 	}
 }
 
-void LoRa_PrintSetting()
-{
-		for (uint8_t i=0;i<0x70;i++)
-	{
-		uint8_t value = RegisterRead (i);
-		printf("%.2x : %.2x\n",i,value);
-		delay(0.02);
-	}
-	
-}
-
 	
 uint8_t LoRa_Tx_Done_Interrupt_Response()
 {
 	// judge Interrupt Flag
-	uint8_t inturruptFlags = RegisterRead(SX1276_RegIRQFLAGS);
+	uint8_t inturruptFlags = getInterruptFlag();
 	if(inturruptFlags & RFLR_IRQFLAGS_TXDONE)
 	{
 		printf("TX Done");
-		RegisterWrite(SX1276_RegIRQFLAGS,RFLR_IRQFLAGS_TXDONE);
+		clearInterruptFlag(RFLR_IRQFLAGS_TXDONE);
 		LoRa_sleep();
+		
+		// set rtc timer interrupt to receive when need receive and without lowpower
+		if(callbackSessionPtr ->isReceive == TRUE )
+		{
+			if(callbackSessionPtr->isSleepWaiting == FALSE)
+			{
+				rtc_wakeup_interrupt_setting(callbackSessionPtr ->receiveWaitTime);
+			}
+		}
+		
+		// change session
+		callbackSessionPtr ->isTxDone = TRUE;
+		
 		return 1;
 	}
 	return 0;
 }
 
+
+static void packgeProcess_JoinAccept(uint8_t* packet)
+{
+	LORA_JOIN_ACCEPT_PHYPAYLOAD accept_phyPayload;
+	memcpy(&accept_phyPayload,packet,sizeof(accept_phyPayload));
+	LoRaMacJoinDecrypt( (uint8_t*)&(accept_phyPayload.AppNonce), sizeof(accept_phyPayload)-1, callbackSessionPtr->key,(uint8_t*)&(accept_phyPayload.AppNonce));
+
+	// confirm CMAC 
+	uint8_t mic[16];
+		// sizeof(accept_macpayload) -4 :subtract 4 bytes of  CMAC
+	LoRaMacJoinComputeMic((uint8_t*)&accept_phyPayload, sizeof(accept_phyPayload)-4, callbackSessionPtr->key, mic);
+	
+	if(memcmp (mic,&accept_phyPayload.mic,4) != 0)
+	{
+		return;		
+		printf("Wrong MIC \n");
+	}
+	
+	//set session settings
+	memcpy(&(callbackSessionPtr->AppNonce),&(accept_phyPayload.AppNonce),sizeof(accept_phyPayload.AppNonce));
+	memcpy(&(callbackSessionPtr->NetID),&(accept_phyPayload.NetID),sizeof(accept_phyPayload.NetID));
+	memcpy(&(callbackSessionPtr->DevAddr),&(accept_phyPayload.DevAddr),sizeof(accept_phyPayload.DevAddr));
+	memcpy(&(callbackSessionPtr->DLSettings),&(accept_phyPayload.DLSettings),sizeof(accept_phyPayload.DLSettings));
+	memcpy(&(callbackSessionPtr->RxDelay),&(accept_phyPayload.RxDelay),sizeof(accept_phyPayload.RxDelay));
+	
+	uint32_t channelFreq=0;
+	memcpy(&channelFreq,&accept_phyPayload.CFList.FreqCh4,3);
+	callbackSessionPtr->Channel_4_Freq = channelFreq*100;
+	memcpy(&channelFreq,&accept_phyPayload.CFList.FreqCh5,3);
+	callbackSessionPtr->Channel_5_Freq = channelFreq*100;
+	memcpy(&channelFreq,&accept_phyPayload.CFList.FreqCh6,3);
+	callbackSessionPtr->Channel_6_Freq = channelFreq*100;
+	memcpy(&channelFreq,&accept_phyPayload.CFList.FreqCh7,3);
+	callbackSessionPtr->Channel_7_Freq = channelFreq*100;
+	memcpy(&channelFreq,&accept_phyPayload.CFList.FreqCh8,3);
+	callbackSessionPtr->Channel_8_Freq = channelFreq*100;
+	
+	// calculate NwkSKey,AppSKey
+	uint16_t devNonce = 0;
+	memcpy(&devNonce,callbackSessionPtr->DevNonce,2);
+	LoRaMacJoinComputeSKeys(callbackSessionPtr->key,callbackSessionPtr->AppNonce , devNonce,callbackSessionPtr->NwkSKey, callbackSessionPtr->AppSKey );
+
+	// change session flag
+	callbackSessionPtr->isJoinNetwork = TRUE;
+}
+
+static void packgeProcess_UnconfirmedDataDown(uint8_t* packet)
+{
+	LORA_JOIN_ACCEPT_PHYPAYLOAD accept_phyPayload;
+	memcpy(&accept_phyPayload,packet,sizeof(accept_phyPayload));
+	LoRaMacJoinDecrypt( (uint8_t*)&(accept_phyPayload.AppNonce), sizeof(accept_phyPayload)-1, callbackSessionPtr->key,(uint8_t*)&(accept_phyPayload.AppNonce));
+
+	// confirm CMAC 
+	uint8_t mic[16];
+		// sizeof(accept_macpayload) -4 :subtract 4 bytes of  CMAC
+	LoRaMacJoinComputeMic((uint8_t*)&accept_phyPayload, sizeof(accept_phyPayload)-4, callbackSessionPtr->key, mic);
+	
+	if(memcmp (mic,&accept_phyPayload.mic,4) != 0)
+	{
+		return;		
+		printf("Wrong MIC \n");
+	}
+	
+	//set session settings
+	memcpy(&(callbackSessionPtr->AppNonce),&(accept_phyPayload.AppNonce),sizeof(accept_phyPayload.AppNonce));
+	memcpy(&(callbackSessionPtr->NetID),&(accept_phyPayload.NetID),sizeof(accept_phyPayload.NetID));
+	memcpy(&(callbackSessionPtr->DevAddr),&(accept_phyPayload.DevAddr),sizeof(accept_phyPayload.DevAddr));
+	memcpy(&(callbackSessionPtr->DLSettings),&(accept_phyPayload.DLSettings),sizeof(accept_phyPayload.DLSettings));
+	memcpy(&(callbackSessionPtr->RxDelay),&(accept_phyPayload.RxDelay),sizeof(accept_phyPayload.RxDelay));
+	
+	uint32_t channelFreq=0;
+	memcpy(&channelFreq,&accept_phyPayload.CFList.FreqCh4,3);
+	callbackSessionPtr->Channel_4_Freq = channelFreq*100;
+	memcpy(&channelFreq,&accept_phyPayload.CFList.FreqCh5,3);
+	callbackSessionPtr->Channel_5_Freq = channelFreq*100;
+	memcpy(&channelFreq,&accept_phyPayload.CFList.FreqCh6,3);
+	callbackSessionPtr->Channel_6_Freq = channelFreq*100;
+	memcpy(&channelFreq,&accept_phyPayload.CFList.FreqCh7,3);
+	callbackSessionPtr->Channel_7_Freq = channelFreq*100;
+	memcpy(&channelFreq,&accept_phyPayload.CFList.FreqCh8,3);
+	callbackSessionPtr->Channel_8_Freq = channelFreq*100;
+	
+	// calculate NwkSKey,AppSKey
+	uint16_t devNonce = 0;
+	memcpy(&devNonce,callbackSessionPtr->DevNonce,2);
+	LoRaMacJoinComputeSKeys(callbackSessionPtr->key,callbackSessionPtr->AppNonce , devNonce,callbackSessionPtr->NwkSKey, callbackSessionPtr->AppSKey );
+
+	// change session flag
+	callbackSessionPtr->isJoinNetwork = TRUE;
+}
+
+
+
 uint8_t LoRa_Rx_Done_Interrupt_Response()
 {
+	
+	
 	// judge Interrupt Flag
-	uint8_t inturruptFlags = RegisterRead(SX1276_RegIRQFLAGS);
+	uint8_t inturruptFlags =getInterruptFlag();
 	if(inturruptFlags & RFLR_IRQFLAGS_RXDONE)
 	{
 		printf("RX Done");
-		RegisterWrite(SX1276_RegIRQFLAGS,RFLR_IRQFLAGS_RXDONE);
-		uint8_t FIFO_addr = RegisterRead(SX1276_RegFIFORXCURRENTADDR);
-		uint8_t rxLength = RegisterRead(SX1276_RegRXNBBYTES);
-		printf("FIFO %d",FIFO_addr);
-		uint8_t recvBuf[rxLength];
-		RegisterWrite(SX1276_RegFIFOADDRPTR, FIFO_addr);
-		BlockRead(SX1276_RegFIFO, recvBuf,rxLength);
+		// clear Interrupt Flag
+		clearInterruptFlag(RFLR_IRQFLAGS_RXDONE);
 		
-		// decode Join-Accept
-		LORA_JOIN_ACCEPT joinAcceptStr;
-		memcpy((void*)&joinAcceptStr,recvBuf,rxLength);
+		// clear_session isReceive
+		callbackSessionPtr->isReceive = FALSE;
 		
-		//LoRaMacJoinDecrypt( &(joinAcceptStr.Payload), sizeof(joinAcceptStr.Payload), lora_session->key , &(joinAcceptStr.Payload), );
-		for(int i=0;i<sizeof(recvBuf);i++)
+		// change session
+		callbackSessionPtr ->isReceive = FALSE;
+		
+		// Read Value From Buf
+		
+		uint8_t recvBuf[255];
+		uint8_t rxLength = LoRaChip_readReceiveBuf(recvBuf);
+		
+		for (int i=0; i<rxLength; i++)
 		{
-			printf("%.2x:",recvBuf[i]);
+			printf("%.2x,",recvBuf[i]);
 		}
 		
-		//LoRa_sleep();
+		
+		// Decode Package
+		LORA_PHYPAYLOAD phy_payload_str;
+		memcpy(&phy_payload_str,recvBuf,rxLength);
+		switch(phy_payload_str.MHDR)
+		{
+			case MTTYPE_JoinAccept:
+				packgeProcess_JoinAccept((uint8_t*)&phy_payload_str);
+			break;
+				
+		}
+		/*
+		// decode Join-Accept
+		
+		*/
+		LoRa_sleep();
 		return 1;
 	}
 	return 0;
@@ -369,12 +412,22 @@ uint8_t LoRa_Rx_Done_Interrupt_Response()
 uint8_t LoRa_Rx_TimeOut_Interrupt_Response()
 {
 	// judge Interrupt Flag
-	uint8_t inturruptFlags = RegisterRead(SX1276_RegIRQFLAGS);
+	uint8_t inturruptFlags = getInterruptFlag();
 	if(inturruptFlags & RFLR_IRQFLAGS_RXTIMEOUT)
 	{
 		printf("RX TimeOut");
-		RegisterWrite(SX1276_RegIRQFLAGS,RFLR_IRQFLAGS_RXTIMEOUT);
-		//LoRa_sleep();
+		clearInterruptFlag(RFLR_IRQFLAGS_RXTIMEOUT);
+		LoRa_sleep();
+		return 1;
+	}
+	return 0;
+}
+
+uint8_t LoRa_RTC_Interrupt_Response()
+{
+	if(callbackSessionPtr ->isReceive == TRUE)
+	{
+		RF_Receive();
 		return 1;
 	}
 	return 0;

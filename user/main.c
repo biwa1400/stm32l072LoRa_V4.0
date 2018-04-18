@@ -1,6 +1,8 @@
 #include "stdio.h"
 #include "regLib.h"
 #include "lora.h"
+#include "loraChip.h"
+#include "loraApp.h"
 
 
 int main()
@@ -8,15 +10,15 @@ int main()
 	//PA_8_clock_out_enable(PA8_CLOCK_OUT_SOURCE_SYSCLK,PA8_CLOCK_OUT_DIV16);
 	
 	switch_32MHz();
-  LORA_SESSION loraSession;
+	
+	
+	static LORA_SESSION loraSession;
 	LoRa_init(&loraSession);
 	
-	LoRa_Set_Frequency(869500000);
-	LoRa_Set_TxPower (0xff);
-	LoRa_Set_SF (12);
-	LoRa_JoinNetwork(&loraSession);
-	delay(5);
-	RF_Receive();
+	LoRa_JoinNetwork(&loraSession,FALSE,FALSE);
+	delay(10);
+	uint8_t sendBuf[]="dabin";
+	LoRa_package_send(&loraSession,1,0,0, sendBuf,5, TRUE);
 	//LoRa_sleep();
 	
 	//printf("start!");

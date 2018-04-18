@@ -1,5 +1,7 @@
-#include "stm32l0xx.h"
+#include "regLib.h"
 #include "stdio.h"
+
+static uint8_t rtcRangeMode = RTC_RANGE_MODE_HZ;
 
 void rtc_allow()
 {
@@ -62,7 +64,7 @@ void rtc_Init()
 	while((RTC->ISR & RTC_ISR_INITF) != RTC_ISR_INITF);
 	// write prescaler value
 	RTC->PRER = 0x002503E8; //37kHz/37(0X25)=1Khz, 1KHz/1000(0X3E8)=1Hz
-	//RTC->PRER = 0x00250000; //37kHz/37(0X25)=1Khz
+	//RTC->PRER = 0x0025; //37kHz/37(0X25)=1Khz
 	// disable wakeup counter
 	RTC->CR &= ~RTC_CR_WUTE;
 	// change wakeup clock selection
@@ -76,6 +78,36 @@ void rtc_Init()
 	isRTC_Init = 1;
 }
 
+
+static void rtc_chageRange(uint8_t mode)
+{
+	if (mode == rtcRangeMode)
+	{
+		return;
+	}
+	// allow access RTC
+	rtc_allow();
+	//allow to program time,date,prescaler register register
+	RTC->ISR |= RTC_ISR_INIT;        
+	// wait RTC enter initializatio mode
+	while((RTC->ISR & RTC_ISR_INITF) != RTC_ISR_INITF);
+	// write prescaler value
+	if(mode == RTC_RANGE_MODE_HZ)
+	{
+		RTC->PRER = 0x002503E8; //37kHz/37(0X25)=1Khz, 1KHz/1000(0X3E8)=1Hz
+		rtcRangeMode = RTC_RANGE_MODE_HZ;
+	}
+	else
+	{
+			RTC->PRER = 0x25; //37kHz/37(0X25)=1Khz
+			rtcRangeMode = RTC_RANGE_MODE_KHZ;
+	}
+	// disable wakeup counter
+	RTC->CR &= ~RTC_CR_WUTE;
+	// allow access RTC
+	rtc_disAllow();
+}
+
 void rtc_DeInit()
 {
 	if(!isRTC_Init) return;
@@ -87,7 +119,55 @@ void rtc_DeInit()
 	isRTC_Init = 0;
 }
 
+/*
 void RTC_IRQHandler()
 {
 	EXTI->PR |= EXTI_PR_PIF20;
+}
+
+*/
+
+void rtc_wakeup_interrupt_setting(float second)
+{
+	// Init RTC
+	rtc_Init();
+	uint16_t delayValue=0;
+	if (second > 60)
+	{
+		//change setting to HZ
+		rtc_chageRange(RTC_RANGE_MODE_HZ);
+		// change wakeup time to 1Hz
+		delayValue = second;
+	}
+	else if (second >= 0.001)
+	{
+			//change setting to KHZ
+		rtc_chageRange(RTC_RANGE_MODE_KHZ);
+		// change wakeup time to 1Hz
+		delayValue = second*1000;
+	}
+	
+	// allow access RTC register
+	rtc_allow();
+	// disable wakeup timer to modify it
+	RTC->CR &=~ RTC_CR_WUTE; 
+	// waiting until allow to modify reload value
+	while((RTC->ISR & RTC_ISR_WUTWF) != RTC_ISR_WUTWF);
+	RTC->WUTR = delayValue;
+
+
+	// enable wake up interrupt
+	RTC->CR |= RTC_CR_WUTIE;
+	// enable wake up counter
+	RTC->CR |= RTC_CR_WUTE;
+	// Reset Wake up flag
+	RTC->ISR &= ~RTC_ISR_WUTF;
+	// disallow access
+	rtc_disAllow();
+	
+	// configure RTC Interrupt EXTI
+	SET_BIT( EXTI->IMR,EXTI_IMR_IM20);                 // enable RTC Wakeup timer interrupt line(20)
+	SET_BIT( EXTI->RTSR,EXTI_RTSR_TR20);               // enable RTC Wakeup timer interrupt rising edge (20)
+	NVIC_SetPriority(RTC_IRQn, 0);                     // set highest interrupt Priority for RTC EXTI (core)
+	NVIC_EnableIRQ(RTC_IRQn);                          // enable  RTC EXTI (core)
 }
