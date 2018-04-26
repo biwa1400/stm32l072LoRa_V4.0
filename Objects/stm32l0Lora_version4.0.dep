@@ -1,5 +1,5 @@
 Dependencies for Project 'stm32l0Lora', Target 'version4.0': (DO NOT MODIFY !)
-F (.\user\main.c)(0x5AD75294)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
+F (.\user\main.c)(0x5AE1CF5B)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\main.o --omf_browse .\objects\main.crf --depend .\objects\main.d)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x588BE5B4)
 I (.\regLib\regLib.h)(0x5ACF7812)
 I (.\CMSIS\stm32l0xx.h)(0x5AC4D5F8)
@@ -19,11 +19,13 @@ I (.\regLib\gpio.h)(0x5AD5EF8C)
 I (.\regLib\spi.h)(0x5ACC7301)
 I (.\regLib\rng.h)(0x5ACC9F19)
 I (.\regLib\interrupt.h)(0x5ACF79D0)
-I (.\loraLib\lora.h)(0x5AD753B6)
+I (.\loraLib\lora.h)(0x5AE1CF0F)
+I (.\loraLib\loraProtocol.h)(0x5AE19251)
+I (.\loraLib\sx1276.h)(0x5A0CEC90)
 I (.\loraLib\loraChip.h)(0x5AD5B83B)
 I (user\loraApp.h)(0x5AD5B623)
 F (.\user\interrupt.c)(0x5AD5FE19)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\interrupt.o --omf_browse .\objects\interrupt.crf --depend .\objects\interrupt.d)
-I (.\loraLib\lora.h)(0x5AD753B6)
+I (.\loraLib\lora.h)(0x5AE1CF0F)
 I (.\CMSIS\stm32l0xx.h)(0x5AC4D5F8)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\stm32l072xx.h)(0x573D70D6)
 I (.\CMSIS\core_cm0plus.h)(0x59B686AB)
@@ -32,6 +34,8 @@ I (.\CMSIS\core_cmInstr.h)(0x59B686AB)
 I (.\CMSIS\cmsis_armcc.h)(0x59B686AB)
 I (.\CMSIS\core_cmFunc.h)(0x59B686AB)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.h)(0x573D70D6)
+I (.\loraLib\loraProtocol.h)(0x5AE19251)
+I (.\loraLib\sx1276.h)(0x5A0CEC90)
 I (.\regLib\regLib.h)(0x5ACF7812)
 I (.\regLib\clock.h)(0x5ACB27B8)
 I (.\regLib\delay.h)(0x5ACB29C4)
@@ -230,8 +234,8 @@ I (regLib\spi.h)(0x5ACC7301)
 I (regLib\rng.h)(0x5ACC9F19)
 I (regLib\interrupt.h)(0x5ACF79D0)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x588BE5B4)
-F (.\loraLib\lora.c)(0x5AD7560E)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\lora.o --omf_browse .\objects\lora.crf --depend .\objects\lora.d)
-I (loraLib\lora.h)(0x5AD753B6)
+F (.\loraLib\lora.c)(0x5AE1CF25)(--c99 -c --cpu Cortex-M0+ -D__MICROLIB -g -W -O0 --apcs=interwork --split_sections -I .\CMSIS -I .\ecrypt -I .\loraLib -I .\universal -I .\user -I .\regLib-I.\RTE\_version4.0-IC:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include-IC:\Keil_v5\ARM\CMSIS\Include-D__UVISION_VERSION="524" -DSTM32L072xx -DSTM32L072xx-o .\objects\lora.o --omf_browse .\objects\lora.crf --depend .\objects\lora.d)
+I (loraLib\lora.h)(0x5AE1CF0F)
 I (.\CMSIS\stm32l0xx.h)(0x5AC4D5F8)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\stm32l072xx.h)(0x573D70D6)
 I (.\CMSIS\core_cm0plus.h)(0x59B686AB)
@@ -240,10 +244,10 @@ I (.\CMSIS\core_cmInstr.h)(0x59B686AB)
 I (.\CMSIS\cmsis_armcc.h)(0x59B686AB)
 I (.\CMSIS\core_cmFunc.h)(0x59B686AB)
 I (C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.h)(0x573D70D6)
+I (loraLib\loraProtocol.h)(0x5AE19251)
+I (loraLib\sx1276.h)(0x5A0CEC90)
 I (C:\Keil_v5\ARM\ARMCC\include\stdio.h)(0x588BE5B4)
 I (C:\Keil_v5\ARM\ARMCC\include\string.h)(0x588BE5B4)
-I (loraLib\loraProtocol.h)(0x5AD740F6)
-I (loraLib\sx1276.h)(0x5A0CEC90)
 I (.\ecrypt\LoRaMacCrypto.h)(0x5A0CEC90)
 I (loraLib\loraParameters.h)(0x5AD7555E)
 I (loraLib\loraChip.h)(0x5AD5B83B)

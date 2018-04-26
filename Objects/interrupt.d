@@ -8,6 +8,8 @@
 .\objects\interrupt.o: .\CMSIS\cmsis_armcc.h
 .\objects\interrupt.o: .\CMSIS\core_cmFunc.h
 .\objects\interrupt.o: C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.h
+.\objects\interrupt.o: .\loraLib\loraProtocol.h
+.\objects\interrupt.o: .\loraLib\sx1276.h
 .\objects\interrupt.o: .\regLib\regLib.h
 .\objects\interrupt.o: .\regLib\clock.h
 .\objects\interrupt.o: .\regLib\delay.h

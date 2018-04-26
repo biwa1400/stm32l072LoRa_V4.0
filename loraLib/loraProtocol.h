@@ -50,7 +50,7 @@ typedef struct
 typedef struct
 {
 	uint8_t MHDR;
-  uint8_t MAC_payload[255];
+  uint8_t MAC_payload[256];
 } LORA_PHYPAYLOAD;
 
 typedef struct
@@ -59,8 +59,36 @@ typedef struct
 	uint8_t DevAddr[4];
 	uint8_t FCtrl;
 	uint8_t FCnt[2];
-	uint8_t FOpts_FPort_FRMPayload_MIC[255];
+	uint8_t FOpts_FPort_FRMPayload_MIC[256];
 } LORA_DATAUP;
+
+#ifndef LORA_DATADOWN_STANDARD_LENGTH
+#define LORA_DATADOWN_STANDARD_LENGTH 8
+#endif
+
+typedef struct
+{
+	uint8_t MHDR;
+	uint8_t DevAddr[4];
+	uint8_t FCtrl;
+	uint8_t FCnt[2];
+	uint8_t FOpts_FPort_FRMPayload_MIC[256];
+} LORA_DATADOWN;
+
+
+typedef struct
+{
+	uint8_t isADR;
+	uint8_t isADRACKReq;
+	uint8_t isACK;
+	uint8_t isFpending;
+	uint8_t FOptsLen;
+	uint8_t FOpts[16];
+	uint16_t FCnt;
+	uint8_t FPort;
+	uint8_t FRMPayloadLength;
+	uint8_t FRMPayload[256];
+} U_RECEIVE_PACKET;
 
 
 #endif

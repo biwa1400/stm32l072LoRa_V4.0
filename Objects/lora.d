@@ -8,10 +8,10 @@
 .\objects\lora.o: .\CMSIS\cmsis_armcc.h
 .\objects\lora.o: .\CMSIS\core_cmFunc.h
 .\objects\lora.o: C:\Keil_v5\ARM\PACK\Keil\STM32L0xx_DFP\1.6.1\Device\Include\system_stm32l0xx.h
-.\objects\lora.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
-.\objects\lora.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\lora.o: loraLib\loraProtocol.h
 .\objects\lora.o: loraLib\sx1276.h
+.\objects\lora.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+.\objects\lora.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\string.h
 .\objects\lora.o: .\ecrypt\LoRaMacCrypto.h
 .\objects\lora.o: loraLib\loraParameters.h
 .\objects\lora.o: loraLib\loraChip.h

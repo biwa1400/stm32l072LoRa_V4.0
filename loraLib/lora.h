@@ -1,6 +1,7 @@
 #ifndef __LORA_H__
 #define __LORA_H__
 #include "stm32l0xx.h"
+#include "loraProtocol.h"
 
 #ifndef TRUE
 #define TRUE 1
@@ -48,6 +49,10 @@ typedef struct
 	uint8_t ACK;
 	
 	uint16_t  FCnt;
+	
+	void (*receiveFunc)(U_RECEIVE_PACKET* receivePacket);
+	
+	
 } LORA_SESSION;
 
 
