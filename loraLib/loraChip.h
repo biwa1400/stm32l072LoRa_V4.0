@@ -28,4 +28,10 @@ void    clearInterruptFlag(uint8_t interruptBit);
 
 uint8_t LoRaChip_readReceiveBuf(uint8_t* bufPtr);
 
+void turnOn_TCXO();
+
+void shutDown_TCXO();
+
+void LoRa_wakeUp();
+
 #endif

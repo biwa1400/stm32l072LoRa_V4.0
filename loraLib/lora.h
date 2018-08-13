@@ -43,6 +43,7 @@ typedef struct
 	uint8_t   isSleepWaiting;
 	uint8_t   isTxDone;
 	uint8_t   isSendJustPubFreq;
+	uint8_t   isBusy;
 	
 	uint8_t ADR;
 	uint8_t ADRACKReq;

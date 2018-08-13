@@ -20,4 +20,5 @@
 .\objects\lorachip.o: .\regLib\interrupt.h
 .\objects\lorachip.o: loraLib\sx1276.h
 .\objects\lorachip.o: loraLib\loraChipPinDefine.h
+.\objects\lorachip.o: loraLib\loraChip.h
 .\objects\lorachip.o: C:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h

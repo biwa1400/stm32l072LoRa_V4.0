@@ -54,6 +54,7 @@ static void generateDevNonce(uint8_t* value)
 
 void static sendTrigger (LORA_SESSION* lora_session, uint8_t* sendBuf, uint8_t sendSize)
 {
+	lora_session->isBusy = TRUE;
 	callbackSessionPtr = lora_session;
 	
 	// set transmit frequency
@@ -98,24 +99,10 @@ void static sendTrigger (LORA_SESSION* lora_session, uint8_t* sendBuf, uint8_t s
 	}
 
 	
-	
-	if (lora_session->isReceive == FALSE)
+	RF_Send(sendBuf, sendSize);
+	if (lora_session ->isSleepWaiting == TRUE)
 	{
-			RF_Send(sendBuf, sendSize);
-			return;
-	}
-	else
-	{
-		if (lora_session ->isSleepWaiting ==FALSE)
-		{
-			RF_Send(sendBuf, sendSize);
-		}
-		else
-		{
-			RF_Send(sendBuf, sendSize);
-			while(lora_session ->isTxDone == FALSE);
-			lowpower_stopMode(lora_session ->receiveWaitTime);
-		}
+		lowpower_stopMode_exitInterrupt();
 	}
 }
 
@@ -167,6 +154,7 @@ void LoRa_JoinNetwork(LORA_SESSION* lora_session, uint8_t isReJoin, uint8_t isSl
 
 void LoRa_package_send(LORA_SESSION* lora_session,uint8_t FPort,uint8_t* FOpts, uint8_t FOpts_size, uint8_t* payload,uint8_t payload_size, uint8_t isConfirm)
 {
+	turnOn_TCXO();
 	if(lora_session->isJoinNetwork == FALSE)
 	{
 		return;
@@ -248,24 +236,25 @@ uint8_t LoRa_Tx_Done_Interrupt_Response()
 	{
 		printf("TX Done");
 		clearInterruptFlag(RFLR_IRQFLAGS_TXDONE);
-		LoRa_sleep();
+		LoRa_sleep();		
+		// change session
+		callbackSessionPtr ->isTxDone = TRUE;
+		
 		
 		// set rtc timer interrupt to receive when need receive and without lowpower
 		if(callbackSessionPtr ->isReceive == TRUE )
 		{
-			if(callbackSessionPtr->isSleepWaiting == FALSE)
-			{
 				rtc_wakeup_interrupt_setting(callbackSessionPtr ->receiveWaitTime);
-			}
 		}
-		
-		// change session
-		callbackSessionPtr ->isTxDone = TRUE;
-		
+		else
+		{
+			callbackSessionPtr->isBusy = FALSE;
+		}
 		return 1;
 	}
 	return 0;
 }
+
 
 
 static void packgeProcess_JoinAccept(uint8_t* packet)
@@ -441,6 +430,8 @@ uint8_t LoRa_Rx_Done_Interrupt_Response()
 				
 		}
 		LoRa_sleep();
+		callbackSessionPtr->isBusy = FALSE;
+		
 		return 1;
 	}
 	return 0;
@@ -455,6 +446,7 @@ uint8_t LoRa_Rx_TimeOut_Interrupt_Response()
 		printf("RX TimeOut");
 		clearInterruptFlag(RFLR_IRQFLAGS_RXTIMEOUT);
 		LoRa_sleep();
+		callbackSessionPtr->isBusy = FALSE;
 		return 1;
 	}
 	return 0;
@@ -462,9 +454,16 @@ uint8_t LoRa_Rx_TimeOut_Interrupt_Response()
 
 uint8_t LoRa_RTC_Interrupt_Response()
 {
+	turnOn_TCXO();
 	if(callbackSessionPtr ->isReceive == TRUE)
 	{
+		printf("Start RX   ");
 		RF_Receive();
+		
+		if (callbackSessionPtr ->isSleepWaiting == TRUE)
+		{
+			lowpower_stopMode_exitInterrupt_cancel();
+		}
 		return 1;
 	}
 	return 0;

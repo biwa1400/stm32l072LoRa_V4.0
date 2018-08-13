@@ -1,6 +1,7 @@
 #include "regLib.h"
 #include "sx1276.h"
 #include "loraChipPinDefine.h"
+#include "loraChip.h"
 #include <stdio.h>
 
 
@@ -15,7 +16,7 @@ static void LoRa_Init_GPIO()
 	GPIO_Pin_Mode (RADIO_TCXO_VCC_PORT, RADIO_TCXO_VCC_PIN, RADIO_TCXO_VCC_MODE);
   GPIO_Pin_Pull (RADIO_TCXO_VCC_PORT, RADIO_TCXO_VCC_PIN, RADIO_TCXO_VCC_PULL);
   GPIO_Pin_Speed (RADIO_TCXO_VCC_PORT, RADIO_TCXO_VCC_PIN, RADIO_TCXO_VCC_SPEED);
-  GPIO_Pin_Clear (RADIO_TCXO_VCC_PORT, RADIO_TCXO_VCC_PIN);
+  //GPIO_Pin_Clear (RADIO_TCXO_VCC_PORT, RADIO_TCXO_VCC_PIN);
 	
 	// Antena switch RX
 	GPIO_Pin_Mode (RADIO_ANT_SWITCH_RX_PORT, RADIO_ANT_SWITCH_RX_PIN, RADIO_ANT_SWITCH_RX_MODE);
@@ -54,14 +55,14 @@ static void LoRa_Init_GPIO()
 	io_int_str.GPIO_GROUP=RADIO_DIO0_PORT;
 	io_int_str.pin = RADIO_DIO0_PIN;
 	io_int_str.isRisingtTrig = TRUE;
-	io_int_str.interruptPriority = 1;
+	io_int_str.interruptPriority = 5;
 	IO_Interrupt_enable(&io_int_str);
 	
 	// DIO 1
 	io_int_str.GPIO_GROUP=RADIO_DIO1_PORT;
 	io_int_str.pin = RADIO_DIO1_PIN;
 	io_int_str.isRisingtTrig = TRUE;
-	io_int_str.interruptPriority = 1;
+	io_int_str.interruptPriority = 5;
 	IO_Interrupt_enable(&io_int_str);
 	
 }
@@ -88,6 +89,8 @@ static void LoRa_Init_SPI()
 	
 	SPI_Init (RADIO_SPI, &spi_init_str);
 }
+
+
 
 static inline void RegisterWrite(uint8_t address,uint8_t value)
 {
@@ -117,19 +120,8 @@ static inline void RegisterModify(uint8_t address, uint32_t mask, uint32_t chang
 	RegisterWrite(address,value);
 }
 
-void LoRa_HW_init()
+static void LoRa_Init_RegParameters()
 {
-	//1. init lora_gpio
-	LoRa_Init_GPIO();
-	//2. init lora_spi
-	LoRa_Init_SPI();
-	
-	//1. set TCXO_VCC
-	RCC->IOPENR |= RCC_IOPENR_GPIOAEN; 
-	GPIO_Pin_Set (RADIO_TCXO_VCC_PORT, RADIO_TCXO_VCC_PIN);
-	
-	
-	RCC->IOPENR &= ~RCC_IOPENR_GPIOAEN;
 	// waiting chip turn on 
 	while((RegisterRead(SX1276_RegOPMODE)&RFLR_OPMODE_STANDBY)!=RFLR_OPMODE_STANDBY);
 	//3. enter sleep mode to change LoRa Mode
@@ -147,14 +139,53 @@ void LoRa_HW_init()
 	RegisterWrite(SX1276_RegMODEMCONFIG3,0x08);
 }
 
+void LoRa_HW_init()
+{	
+
+	//1. init lora_gpio
+	LoRa_Init_GPIO();
+	//2. init lora_spi
+	LoRa_Init_SPI();
+		//1. set TCXO_VCC
+	turnOn_TCXO();
+	
+
+	
+	// waiting chip turn on 
+	while((RegisterRead(SX1276_RegOPMODE)&RFLR_OPMODE_STANDBY)!=RFLR_OPMODE_STANDBY);
+	//3. enter sleep mode to change LoRa Mode
+	RegisterWrite(SX1276_RegOPMODE,RFLR_OPMODE_SLEEP);
+	// setting it to LoRa mode
+	RegisterWrite(0x01,0x80);
+	
+	// invert IQ
+	RegisterWrite (SX1276_RegINVERTIQ, 0x67);
+	// synchronous code
+	RegisterWrite(SX1276_RegSYNCWORD,0x34);
+	// enable CRC
+	RegisterWrite(SX1276_RegMODEMCONFIG2,0x74);
+	// symbol length exceeds 16ms
+	RegisterWrite(SX1276_RegMODEMCONFIG3,0x08);
+
+
+}
+
+void LoRa_wakeUp()
+{
+	turnOn_TCXO();
+	
+}
+
 void LoRa_sleep()
 {
 	RegisterModify(SX1276_RegOPMODE,RFLR_OPMODE_MASK,RFLR_OPMODE_SLEEP);
+	shutDown_TCXO();
 }
 
 void LoRa_standby()
 {
 	RegisterModify(SX1276_RegOPMODE,RFLR_OPMODE_MASK,RFLR_OPMODE_STANDBY);
+	shutDown_TCXO();
 }
 
 void LoRa_resetChip()
@@ -264,3 +295,21 @@ void clearInterruptFlag(uint8_t interruptBit)
 {
 	RegisterWrite(SX1276_RegIRQFLAGS,interruptBit);
 }
+
+void turnOn_TCXO()
+{
+		RCC->IOPENR |= RCC_IOPENR_GPIOBEN; 
+		GPIO_Pin_Mode (RADIO_TCXO_VCC_PORT, RADIO_TCXO_VCC_PIN, RADIO_TCXO_VCC_MODE);
+		GPIO_Pin_Set (RADIO_TCXO_VCC_PORT, RADIO_TCXO_VCC_PIN);
+		RCC->IOPENR &= ~RCC_IOPENR_GPIOBEN; 
+}
+
+void shutDown_TCXO()
+{
+		RCC->IOPENR |= RCC_IOPENR_GPIOBEN; 
+		GPIO_Pin_Clear (RADIO_TCXO_VCC_PORT, RADIO_TCXO_VCC_PIN);
+		GPIO_Pin_Mode (RADIO_TCXO_VCC_PORT, RADIO_TCXO_VCC_PIN, GPIO_MODE_ANALOG);
+		RCC->IOPENR &= ~RCC_IOPENR_GPIOBEN; 
+}
+
+

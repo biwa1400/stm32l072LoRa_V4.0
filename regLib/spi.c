@@ -74,56 +74,7 @@ void SPI_Init (SPI_TypeDef * SPI, SPI_INIT_DEF* spi_init_str)
 }
 
  
-void SPI_LoRa_Init ()
-{
-	// setting GPIO 
-	// PA6  -> SPI1_MISO
-	// PA7  -> SPI1_MOSI
-	// PA15 -> SPI1_NSS
-	// PB3  -> SPI1_SCLK
-	// 1.Enable PA,PB
-	RCC->IOPENR |= RCC_IOPENR_GPIOAEN; 
-	RCC->IOPENR |= RCC_IOPENR_GPIOBEN;  
-  // 2.config GPIO mode to alternate 
-	GPIOA -> MODER &= ~(GPIO_MODER_MODE6|GPIO_MODER_MODE7|GPIO_MODER_MODE15);  
-	GPIOA -> MODER |= (GPIO_MODER_MODE6_1|GPIO_MODER_MODE7_1|GPIO_MODER_MODE15_1);
-	
-	GPIOB -> MODER &= ~GPIO_MODER_MODE3;  
-	GPIOB -> MODER |= GPIO_MODER_MODE3_1;
-	
-	// 3.config GPIO speed	
-	GPIOA -> OSPEEDR |= (GPIO_OSPEEDER_OSPEED6|GPIO_OSPEEDER_OSPEED7|GPIO_OSPEEDER_OSPEED15);
-	 		
-	GPIOB -> OSPEEDR |= GPIO_OSPEEDER_OSPEED3;
-	
-  // 4.config alternate number -> 0
-	GPIOA -> AFR[0] &= ~(uint32_t)(0xff<<4*6);
-	GPIOA -> AFR[1] &= ~(uint32_t)(0x0f<<4*7);
-	GPIOB -> AFR[0] &= ~(uint32_t)(0x0f<<4*3);
-	
-	// 5. pull up PA15-> SPI1_NSS
-	GPIOA -> PUPDR &= ~(GPIO_PUPDR_PUPD15);
-	GPIOA -> PUPDR |= (0X01<<GPIO_PUPDR_PUPD15_Pos);
-	// 5.Disable PA model
-	RCC->IOPENR &= ~RCC_IOPENR_GPIOAEN; 
-	RCC->IOPENR &= ~RCC_IOPENR_GPIOBEN; 
 
-	// spi setting
-	//	1. reset SPI1 Model
-	RCC->APB2RSTR |= RCC_APB2RSTR_SPI1RST;
-	RCC->APB2RSTR &= ~RCC_APB2RSTR_SPI1RST;
-	// 1. Enable SPI1 Model
-	RCC->APB2ENR |= RCC_APB2ENR_SPI1EN;
-
-	// 3. NSS setting
-	SPI1 -> CR1 &= ~(SPI_CR1_SSM);
-	SPI1 -> CR2 |= SPI_CR2_SSOE;
-	// 4. setting to master
-	SPI1->CR1 = SPI_CR1_MSTR;
-	// 5. baudrate /2
-	SPI1->CR1 &= ~ SPI_CR1_BR;
-	SPI1->CR1 |= (0x00<<SPI_CR1_BR_Pos);
-}
 
 uint8_t SPI_RegisterRead (SPI_TypeDef * SPI, uint8_t address)
 {

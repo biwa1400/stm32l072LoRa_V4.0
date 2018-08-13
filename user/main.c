@@ -17,7 +17,33 @@ void recvCallBack (U_RECEIVE_PACKET* receivePacket)
 int main()
 {
 	//PA_8_clock_out_enable(PA8_CLOCK_OUT_SOURCE_SYSCLK,PA8_CLOCK_OUT_DIV16);
+
+ 	switch_32MHz();
 	
+	static LORA_SESSION loraSession;
+
+	//lowpower_stopMode(500);
+	LoRa_init(&loraSession);	
+	loraSession.receiveFunc= &recvCallBack;
+	LoRa_JoinNetwork(&loraSession,FALSE,TRUE);
+	loraSession.ADR=TRUE;
+	loraSession.ACK=TRUE;
+	while(loraSession.isBusy==TRUE);
+	lowpower_stopMode(5);
+
+	//
+for (int i=5;i>0;i++)
+{	
+	uint8_t sendBuf[]="dabin";
+	//loraSession.isSleepWaiting = FALSE;
+	LoRa_package_send(&loraSession,1,0,0, sendBuf,5, TRUE);
+	loraSession.FCnt +=1;
+	while(loraSession.isBusy==TRUE);
+	lowpower_stopMode(5);
+}
+
+
+/*
 	switch_32MHz();
 	
 	
@@ -31,28 +57,16 @@ int main()
 	loraSession.ADR=TRUE;
 	loraSession.ACK=TRUE;
 	delay(10);
-	uint8_t sendBuf[]="dabin";
-	LoRa_package_send(&loraSession,1,0,0, sendBuf,5, TRUE);
-	delay(10);
-	LoRa_package_send(&loraSession,1,0,0, sendBuf,5, TRUE);
-	delay(10);
-	LoRa_package_send(&loraSession,1,0,0, sendBuf,5, TRUE);
-	delay(10);
-	//LoRa_sleep();
-	
-	//printf("start!");
-	/*
-	IO_Interrupt_Def io_int_str;
-	io_int_str.GPIO_GROUP=GPIOB;
-	io_int_str.pin = 2;
-	io_int_str.isRisingtTrig = TRUE;
-	io_int_str.interruptPriority = 0;
-	IO_Interrupt_enable(&io_int_str);
-	RCC->IOPENR |= RCC_IOPENR_IOPBEN;
-*/	
 	while(1)
 	{
+		uint8_t sendBuf[]="dabin";
+		LoRa_package_send(&loraSession,1,0,0, sendBuf,5, TRUE);
+		delay(10);
+		LoRa_package_send(&loraSession,1,0,0, sendBuf,5, TRUE);
+		delay(10);
+		LoRa_package_send(&loraSession,1,0,0, sendBuf,5, TRUE);
+		delay(10);
 	}
-
+*/
 	return 0;
 }

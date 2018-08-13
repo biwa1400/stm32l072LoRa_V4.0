@@ -27,6 +27,8 @@ void lowpower_standByMode(float second);
 void lowpower_sleepMode_noTimer();
 void lowpower_stopMode_noTimer();
 void lowpower_standByMode_noTimer();
+void lowpower_stopMode_exitInterrupt();
+void lowpower_stopMode_exitInterrupt_cancel();
 
 
 #endif
