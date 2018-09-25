@@ -336,7 +336,7 @@
               <MiscControls></MiscControls>
               <Define>STM32L072xx</Define>
               <Undefine></Undefine>
-              <IncludePath>.\CMSIS;.\ecrypt;.\loraLib;.\universal;.\user;.\regLib</IncludePath>
+              <IncludePath>.\CMSIS;.\ecrypt;.\loraLib;.\universal;.\user;.\regLib;.\module</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -460,6 +460,16 @@
               <FileType>1</FileType>
               <FilePath>.\regLib\interrupt.c</FilePath>
             </File>
+            <File>
+              <FileName>i2c.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\regLib\i2c.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\regLib\timer.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -499,6 +509,16 @@
               <FileName>universal.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\universal\universal.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>MODULE</GroupName>
+          <Files>
+            <File>
+              <FileName>ms552.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\module\ms552.c</FilePath>
             </File>
           </Files>
         </Group>

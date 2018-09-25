@@ -32,5 +32,8 @@
 #include "spi.h"
 #include "rng.h"
 #include "interrupt.h"
+#include "i2c.h"
+#include "main.h"
+#include "timer.h"
 
 #endif

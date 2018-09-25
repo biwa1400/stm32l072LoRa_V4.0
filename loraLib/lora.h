@@ -23,6 +23,7 @@ typedef struct
 	uint8_t   DevAddr[4];
 	uint8_t   DLSettings;
 	uint8_t   RxDelay;
+	int       rssi;
 	
 	uint8_t   NwkSKey[16];
 	uint8_t   AppSKey[16];
@@ -51,7 +52,9 @@ typedef struct
 	
 	uint16_t  FCnt;
 	
-	void (*receiveFunc)(U_RECEIVE_PACKET* receivePacket);
+	void (*receiveCallback)(U_RECEIVE_PACKET* receivePacket);
+	void (*receiveTimeoutCallback)();
+	void (*joinNetworkCallback)();
 	
 	
 } LORA_SESSION;
@@ -67,13 +70,14 @@ void LoRa_Send(uint8_t* data, uint8_t size);
 void RF_Receive();
 
 
-void LoRa_JoinNetwork(LORA_SESSION* lora_session, uint8_t isReJoin, uint8_t isSleepWaiting);
-void LoRa_package_send(LORA_SESSION* lora_session,uint8_t FPort,uint8_t* FOpts, uint8_t FOpts_size, uint8_t* payload,uint8_t payload_size, uint8_t isConfirm);
+void LoRa_JoinNetwork();
+void LoRa_package_send_simple ( uint8_t* payload,uint8_t payload_size, uint8_t isReceive);
+void LoRa_package_send(uint8_t FPort, uint8_t* FOpts, uint8_t FOpts_size, uint8_t* payload,uint8_t payload_size, uint8_t isConfirm);
 
 void testMic(LORA_SESSION* lora_session);
 uint8_t LoRa_Tx_Done_Interrupt_Response();
 uint8_t LoRa_Rx_Done_Interrupt_Response();
 uint8_t LoRa_Rx_TimeOut_Interrupt_Response();
-uint8_t LoRa_RTC_Interrupt_Response();
+uint8_t LoRa_timer_Interrupt_Response();
 
 #endif

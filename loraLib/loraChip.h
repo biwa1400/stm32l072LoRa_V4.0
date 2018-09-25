@@ -1,6 +1,7 @@
 #ifndef __LORA_CHIP_H
 #define __LORA_CHIP_H
 
+void RegisterModify(uint8_t address, uint32_t mask, uint32_t changeValue);
 
 void LoRa_HW_init();
 
@@ -33,5 +34,7 @@ void turnOn_TCXO();
 void shutDown_TCXO();
 
 void LoRa_wakeUp();
+
+int getRssi();
 
 #endif

@@ -1,12 +1,21 @@
 #include <stdint.h>
 #include "aes.h"
 #include "cmac.h"
+#include "stdio.h"
 
 static void memset1( uint8_t *dst, uint8_t value, uint16_t size )
 {
   while( size-- )
   {
     *dst++ = value;
+  }
+}
+
+static void memset2( uint8_t *dst, uint8_t value, uint16_t size )
+{
+  while( size-- )
+  {
+    *dst++ = 0;
   }
 }
 
@@ -35,11 +44,11 @@ static void memcpy1( uint8_t *dst, const uint8_t *src, uint16_t size )
         }                          \
     } while (0) \
 
-
+		
 void AES_CMAC_Init(struct AES_CMAC_CTX *ctx)
 {
   memset1(ctx->X, 0, sizeof ctx->X);
-  ctx->M_n = 0;
+  ctx->M_n = 0;	
   memset1(ctx->rijndael.ksch, '\0', 240);
 }
     

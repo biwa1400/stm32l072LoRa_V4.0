@@ -6,6 +6,7 @@
 #include "cmac.h"
 
 #include "LoRaMacCrypto.h"
+#include "stdio.h"
 
 /*!
  * CMAC/AES Message Integrity Code (MIC) Block B0 size
@@ -72,8 +73,12 @@ static struct AES_CMAC_CTX AesCmacCtx[1];
  * \param [IN]  sequenceCounter Frame sequence counter
  * \param [OUT] mic Computed MIC field
  */
+
+
+ 
 void LoRaMacComputeMic( const uint8_t *buffer, uint16_t size, const uint8_t *key, uint32_t address, uint8_t dir, uint32_t sequenceCounter, uint32_t *mic )
 {
+	struct AES_CMAC_CTX AesCmacCtx_dy[1];
   MicBlockB0[5] = dir;
     
   MicBlockB0[6] = ( address ) & 0xFF;
@@ -88,16 +93,11 @@ void LoRaMacComputeMic( const uint8_t *buffer, uint16_t size, const uint8_t *key
 
   MicBlockB0[15] = size & 0xFF;
 
-  AES_CMAC_Init( AesCmacCtx );
-
-  AES_CMAC_SetKey( AesCmacCtx, key );
-
-  AES_CMAC_Update( AesCmacCtx, MicBlockB0, LORAMAC_MIC_BLOCK_B0_SIZE );
-    
-  AES_CMAC_Update( AesCmacCtx, buffer, size & 0xFF );
-    
-  AES_CMAC_Final( Mic, AesCmacCtx );
-    
+  AES_CMAC_Init( AesCmacCtx_dy );
+  AES_CMAC_SetKey( AesCmacCtx_dy, key );
+  AES_CMAC_Update( AesCmacCtx_dy, MicBlockB0, LORAMAC_MIC_BLOCK_B0_SIZE );
+  AES_CMAC_Update( AesCmacCtx_dy, buffer, size & 0xFF );
+  AES_CMAC_Final( Mic, AesCmacCtx_dy );  
   *mic = ( uint32_t )( ( uint32_t )Mic[3] << 24 | ( uint32_t )Mic[2] << 16 | ( uint32_t )Mic[1] << 8 | ( uint32_t )Mic[0] );
 }
 

@@ -16,6 +16,8 @@ void switch_32MHz();
 void switch_16MHz();
 void switch_2MHz();
 
+void clock_disable_LSI();
+
 //PA8_CLOCK_OUT
 // source
 #define PA8_CLOCK_OUT_SOURCE_SYSCLK           (0x01U<<RCC_CFGR_MCOSEL_Pos)

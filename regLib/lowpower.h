@@ -20,15 +20,19 @@
 #define  STANDBY_REGULATOR_STATUS              LOWPOWER_STATUS_OFF
 #define  STANDBY_WAIT_VERF_UP_STATUS           LOWPOWER_STATUS_OFF
 
-void lowpower_sleepMode(float second);
-void lowpower_stopMode(float second);
-void lowpower_standByMode(float second);
 
+void lowpower_sleepMode(float second);
 void lowpower_sleepMode_noTimer();
+void lowpower_change_to_sleepMode();
+
+void lowpower_stopMode(float second);
 void lowpower_stopMode_noTimer();
-void lowpower_standByMode_noTimer();
-void lowpower_stopMode_exitInterrupt();
-void lowpower_stopMode_exitInterrupt_cancel();
+void lowpower_change_to_stopMode();
+
+
+void lowpower_set_always_stop (uint8_t isAlwaysStop);
+uint8_t lowpower_get_always_stop ();
+
 
 
 #endif

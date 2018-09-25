@@ -5,42 +5,41 @@ void sleepmode_enter();
 void standBymode_enter();
 void stopmode_enter_ISR();
 
-// Init RTC before calling this function
-void lowpower_stopMode(float second)
+
+
+void lowpower_set_always_stop (uint8_t isAlwaysStop)
 {
-	// set wakeup clock source is MSI
-	RCC->CFGR &= ~RCC_CFGR_STOPWUCK;
+	if(isAlwaysStop == TRUE)
+	{
+		SCB->SCR |= SCB_SCR_SLEEPONEXIT_Msk;
+	}
+	else
+	{
+			SCB->SCR &= ~SCB_SCR_SLEEPONEXIT_Msk;
+	}
+
+}
+
+uint8_t lowpower_get_always_stop ()
+{
+	return (SCB->SCR &= SCB_SCR_SLEEPONEXIT_Msk)>>SCB_SCR_SLEEPONEXIT_Pos;
+}
+
+// Stop Mode
+void lowpower_stopMode(float seconds)
+{
 	// setting sleep time
-	rtc_wakeup_interrupt_setting(second);
-	// before sleep, disable HSI and PLL
-	switch_2MHz();
+	rtc_wakeup_interrupt_setting(seconds);
 	stopmode_enter();
 }
 
 void lowpower_stopMode_noTimer()
 {
-	// set wakeup clock source is MSI
-	RCC->CFGR &= ~RCC_CFGR_STOPWUCK;
 	// before sleep, disable HSI and PLL
-	switch_2MHz();
 	stopmode_enter();
 }
 
-void lowpower_stopMode_exitInterrupt()
-{
-	// set wakeup clock source is MSI
-	RCC->CFGR &= ~RCC_CFGR_STOPWUCK;
-	// before sleep, disable HSI and PLL
-	switch_2MHz();
-	stopmode_enter_ISR();
-}
-
-void lowpower_stopMode_exitInterrupt_cancel()
-{
-	// clear SLEEPONEXIT
-	SCB->SCR &= ~SCB_SCR_SLEEPONEXIT_Msk;
-}
-
+// sleep mode
 
 // Init RTC before calling this function
 void lowpower_sleepMode(float second)
@@ -50,13 +49,16 @@ void lowpower_sleepMode(float second)
 	sleepmode_enter();
 }
 
+void lowpower_sleepMode_noTimer()
+{
+	sleepmode_enter();
+}
+
+// standby mode
+
 // Init RTC before calling this function
 void lowpower_standByMode(float second)
 {
-	// set wakeup clock source is MSI
-	RCC->CFGR &= ~RCC_CFGR_STOPWUCK;
-	// before sleep, disable HSI and PLL
-	switch_2MHz();
 	// setting sleep time
 	rtc_wakeup_interrupt_setting(second);
 	standBymode_enter();
@@ -64,13 +66,46 @@ void lowpower_standByMode(float second)
 
 void lowpower_standByMode_noTimer()
 {
-	// set wakeup clock source is MSI
-	RCC->CFGR &= ~RCC_CFGR_STOPWUCK;
-	// before sleep, disable HSI and PLL
-	switch_2MHz();
 	standBymode_enter();
 }
 
+
+void lowpower_change_to_sleepMode()
+{
+	// init interrupt 
+
+	//enable PWR clock
+	RCC->APB1ENR |= RCC_APB1ENR_PWREN;
+
+	// reset SLEEPDEEP
+	SCB->SCR &= ~SCB_SCR_SLEEPDEEP_Msk;
+
+
+	// reset PDDS enter standby mode when cpu deepsleep
+	PWR->CR &= ~PWR_CR_PDDS;
+	
+	// clear wakeup flag
+	PWR->CR |= PWR_CR_CWUF;
+	
+	// turn off voltage regulator
+	PWR->CR &= ~PWR_CR_LPSDSR;
+	PWR->CR |= SLEEP_REGULATOR_STATUS << PWR_CR_LPSDSR_Pos;
+	
+	// ULP bit in the PWR_CR register
+	PWR->CR &= ~PWR_CR_ULP;
+	PWR->CR |= SLEEP_VERF_STATUS << PWR_CR_ULP_Pos;
+	
+	// FWU -fast_wakeup
+	PWR->CR &= ~PWR_CR_FWU;
+	PWR->CR |= SLEEP_WAIT_VERF_UP_STATUS << PWR_CR_FWU_Pos;
+
+	// turn off Flash when sleep
+	FLASH->ACR &= ~FLASH_ACR_SLEEP_PD;
+	FLASH->ACR |= SLEEP_FLASH_STATUS << FLASH_ACR_SLEEP_PD_Pos;
+}
+
+
+// static function 
 static void sleepmode_enter()
 {
 	// init interrupt 
@@ -108,8 +143,7 @@ static void sleepmode_enter()
 	__WFI();
 }
 
-
-static void stopmode_enter()
+void stopmode_enter()
 {
 	// init interrupt 
 
@@ -141,7 +175,8 @@ static void stopmode_enter()
 
 }
 
-static void stopmode_enter_ISR()
+
+void lowpower_change_to_stopMode()
 {
 	// init interrupt 
 
@@ -150,9 +185,6 @@ static void stopmode_enter_ISR()
 
 	// set SLEEPDEEP
 	SCB->SCR |= SCB_SCR_SLEEPDEEP_Msk;
-	
-	// set SLEEPONEXIT
-	SCB->SCR |= SCB_SCR_SLEEPONEXIT_Msk;
 
 	// set PDDS enter standby mode when cpu deepsleep
 	PWR->CR &= ~PWR_CR_PDDS;
@@ -172,9 +204,9 @@ static void stopmode_enter_ISR()
 	PWR->CR &= ~PWR_CR_FWU;
 	PWR->CR |= STOP_WAIT_VERF_UP_STATUS << PWR_CR_FWU_Pos;
 
-	__WFI();
-
 }
+
+
 
 static void standBymode_enter()
 {

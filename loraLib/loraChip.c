@@ -55,14 +55,14 @@ static void LoRa_Init_GPIO()
 	io_int_str.GPIO_GROUP=RADIO_DIO0_PORT;
 	io_int_str.pin = RADIO_DIO0_PIN;
 	io_int_str.isRisingtTrig = TRUE;
-	io_int_str.interruptPriority = 5;
+	io_int_str.interruptPriority = RADIO_DIO_0_INTERRUPT_PRIORITY;
 	IO_Interrupt_enable(&io_int_str);
 	
 	// DIO 1
 	io_int_str.GPIO_GROUP=RADIO_DIO1_PORT;
 	io_int_str.pin = RADIO_DIO1_PIN;
 	io_int_str.isRisingtTrig = TRUE;
-	io_int_str.interruptPriority = 5;
+	io_int_str.interruptPriority = RADIO_DIO_1_INTERRUPT_PRIORITY;
 	IO_Interrupt_enable(&io_int_str);
 	
 }
@@ -112,7 +112,7 @@ static inline void BlockRead(uint8_t address, uint8_t* value, uint8_t size)
 	SPI_BlockRead (RADIO_SPI,address,value,size);
 }
 
-static inline void RegisterModify(uint8_t address, uint32_t mask, uint32_t changeValue)
+void RegisterModify(uint8_t address, uint32_t mask, uint32_t changeValue)
 {
 	uint8_t value = RegisterRead(address);
 	value &= mask;
@@ -146,15 +146,16 @@ void LoRa_HW_init()
 	LoRa_Init_GPIO();
 	//2. init lora_spi
 	LoRa_Init_SPI();
-		//1. set TCXO_VCC
-	turnOn_TCXO();
-	
 
+	
+	//1. set TCXO_VCC
+	turnOn_TCXO();
 	
 	// waiting chip turn on 
 	while((RegisterRead(SX1276_RegOPMODE)&RFLR_OPMODE_STANDBY)!=RFLR_OPMODE_STANDBY);
 	//3. enter sleep mode to change LoRa Mode
 	RegisterWrite(SX1276_RegOPMODE,RFLR_OPMODE_SLEEP);
+	
 	// setting it to LoRa mode
 	RegisterWrite(0x01,0x80);
 	
@@ -166,8 +167,12 @@ void LoRa_HW_init()
 	RegisterWrite(SX1276_RegMODEMCONFIG2,0x74);
 	// symbol length exceeds 16ms
 	RegisterWrite(SX1276_RegMODEMCONFIG3,0x08);
-
-
+	
+	
+	RegisterModify(SX1276_RegOPMODE,RFLR_OPMODE_MASK,0x06);
+	delay(0.001);
+	RegisterModify(SX1276_RegOPMODE,RFLR_OPMODE_MASK,RFLR_OPMODE_SLEEP);
+	shutDown_TCXO();
 }
 
 void LoRa_wakeUp()
@@ -212,7 +217,7 @@ void LoRa_Set_SF (uint8_t value)
 	oldValue &= ~(0xf0);
 	oldValue |= value<<4;
 	RegisterWrite(SX1276_RegMODEMCONFIG2,oldValue);
-	printf("set value to %d %.2x\n",value,oldValue);
+//	printf("set value to %d %.2x\n",value,oldValue);
 	
 	//change low datarate optimize
 	uint8_t registerValue = RegisterRead(SX1276_RegMODEMCONFIG3);
@@ -238,13 +243,8 @@ void RF_Send(uint8_t* data, uint8_t size)
 {	
 	// chage state to standBy
 	RegisterModify(SX1276_RegOPMODE,RFLR_OPMODE_MASK,RFLR_OPMODE_STANDBY);
-	/*
-	RCC->IOPENR |= RCC_IOPENR_GPIOCEN; 
-	GPIO_Pin_Set (RADIO_ANT_SWITCH_TX_BOOST_PORT, RADIO_ANT_SWITCH_TX_BOOST_PIN);
-	RCC->IOPENR &= ~RCC_IOPENR_GPIOCEN;
-*/
+
 	// write value to register
-  //RegisterWrite (SX1276_RegFIFOTXBASEADDR, 0x00);
   RegisterWrite (SX1276_RegFIFOADDRPTR, 0x80);
 	BlockWrite(SX1276_RegFIFO,data,size);
   RegisterWrite (SX1276_RegPAYLOADLENGTH, size);
@@ -259,7 +259,6 @@ void RF_Send(uint8_t* data, uint8_t size)
 void RF_Receive()
 {
 	// change chip state to receive Continuous
-  //RegisterWrite (SX1276_RegFIFOADDRPTR, 0x00);
 		// change IO Interrupt status
 	RegisterModify(SX1276_RegDIOMAPPING1,RFLR_DIOMAPPING1_DIO0_MASK,RFLR_DIOMAPPING1_DIO0_00);
 		// change mode to receive
@@ -289,6 +288,11 @@ void LoRa_PrintSetting()
 uint8_t getInterruptFlag()
 {
 	return RegisterRead(SX1276_RegIRQFLAGS);
+}
+
+int getRssi()
+{
+	return -157 + RegisterRead(SX1276_RegPKTRSSIVALUE);
 }
 
 void clearInterruptFlag(uint8_t interruptBit)

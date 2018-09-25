@@ -15,7 +15,7 @@ void IO_Interrupt_enable(IO_Interrupt_Def* io_interrupt_str)
 // config EXIT_LINE 
 	uint8_t arrayIndex = (io_interrupt_str->pin) / 4;
 	uint8_t setting_pos= (io_interrupt_str->pin) % 4;
-	printf("Index: %d,Pos %d",arrayIndex,setting_pos);
+//	printf("Index: %d,Pos %d",arrayIndex,setting_pos);
 	
 // enable SYSCFG
 	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN;
@@ -50,6 +50,35 @@ void IO_Interrupt_enable(IO_Interrupt_Def* io_interrupt_str)
 	RCC->IOPENR &= ~(0x1U << GPIO_group_num); 
 }
 
+void Interrupt_soft_EXTI_init(uint8_t trigger_Num, uint8_t priority)
+{
+//Configure the mask bits of the Interrupt/Event lines (EXTI_IMR, EXTI_EMR)
+	EXTI->IMR |= 0x1U << trigger_Num;
+/* (7) Enable Interrupt on EXTI0_1 */
+/* (8) Set priority for EXTI0_1 */
+	if (trigger_Num>=0 && trigger_Num<=1)
+	{
+		NVIC_EnableIRQ(EXTI0_1_IRQn);
+		NVIC_SetPriority(EXTI0_1_IRQn,priority); 		
+	}
+	else if (trigger_Num>=2 && trigger_Num<=3)
+	{
+		NVIC_EnableIRQ(EXTI2_3_IRQn); 
+		NVIC_SetPriority(EXTI2_3_IRQn,priority); 		
+	}
+	else
+	{
+		NVIC_EnableIRQ(EXTI4_15_IRQn); 
+		NVIC_SetPriority(EXTI4_15_IRQn,priority); 		
+	}
+}
+
+void Interrupt_soft_EXTI_trigger(uint8_t trigger_Num)
+{
+	EXTI->SWIER |= 0x1U << trigger_Num;
+}
+//Set the required bit in the software interrupt register (EXTI_SWIER).
+//EXTI->SWIER
 
 
 

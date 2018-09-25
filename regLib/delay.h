@@ -3,7 +3,6 @@
 
 #include "regLib.h"
 
-#define DELAY_INTERRUPT_PRIORITY 0U
 
 void delay(float s);
 

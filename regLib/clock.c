@@ -81,6 +81,9 @@ void switch_32MHz()
 	// disable MSI
 	RCC->CR &= ~RCC_CR_MSION;
 	
+	// change wake up clock source
+	RCC->CFGR |= RCC_CFGR_STOPWUCK;
+	
 	// change var frequency
 	changeALLfrequency(PLL32_FREQUENCY);
 }
@@ -112,6 +115,9 @@ void switch_16MHz()
 	
 	// disable MSI
 	RCC->CR &= ~RCC_CR_MSION;
+	
+	// change wake up clock source
+	RCC->CFGR |= RCC_CFGR_STOPWUCK;
 	
 	// change var frequency
 	changeALLfrequency(HSI_FREQUENCY);
@@ -145,6 +151,9 @@ void switch_2MHz()
 	
 	//disable HSI16
 	RCC->CR &= ~RCC_CR_HSION;
+	
+	// change wake up clock source
+	RCC->CFGR &= ~RCC_CFGR_STOPWUCK;
 	
 	//change var frequency
 	changeALLfrequency(MSI_FREQUENCY);
@@ -205,6 +214,12 @@ void RCC_CRS_IRQHandler(void)
  /* Manage error */
  }
 }
+
+void clock_disable_LSI()
+{
+	RCC->CSR &= ~RCC_CSR_LSION; 
+}
+
 
 void PA_8_clock_out_enable(uint32_t clock_source, uint32_t div)
 {
